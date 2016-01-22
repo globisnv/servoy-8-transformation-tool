@@ -1,1 +1,11 @@
 * text=auto !eol
+formTransformer/.classpath -text
+formTransformer/.project -text
+formTransformer/.settings/org.eclipse.jdt.core.prefs -text
+formTransformer/.settings/org.eclipse.m2e.core.prefs -text
+formTransformer/pom.xml -text
+formTransformer/src/entities/Element.java -text
+formTransformer/src/entities/Form.java -text
+formTransformer/src/entities/FormElement.java -text
+formTransformer/src/exceptions/FormTransformerException.java -text
+formTransformer/src/main/FormTransformer.java -text
