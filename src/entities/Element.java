@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -7,6 +8,7 @@ import java.util.Set;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import enums.ElementDatatype;
 import exceptions.FormTransformerException;
 
 public abstract class Element {
@@ -15,58 +17,54 @@ public abstract class Element {
 	private final String name;
 	private final int typeid;
 	private Map<String, String> otherProperties;
-
-	// CONSTRUCTORS
-	/*
-	 * public Element(String uuid, String name, int typeid) { super(); this.uuid
-	 * = uuid; this.name = name; this.typeid = typeid; this.otherProperties =
-	 * new HashMap<>(); }
-	 */
+	private Map<String, ElementDatatype> elementKeyValueDatatypes = ElementDatatype.newElementKeyValueDatatypes();
 
 	public Element(String jsonString) {
 		try {
 			JSONObject jsonObj = new JSONObject(jsonString);
 
+			if (jsonObj.has("name")) {
+				this.name = jsonObj.getString("name");
+			} else {
+				this.name = "transfName_" + new Date().getTime();
+			}
 			this.uuid = jsonObj.getString("uuid");
-			this.name = jsonObj.getString("name");
 			this.typeid = jsonObj.getInt("typeid");
 			this.otherProperties = new HashMap<>();
 
 			Set<String> jsonKeySet = jsonObj.keySet();
+
 			for (String jsonKey : jsonKeySet) {
-				switch (jsonKey) {
-				// privates
-				case "uuid":
-				case "name":
-				case "typeid":
-					break;
-				// integers
-				case "encapsulation":
-				case "view":
-				case "selectionMode":
-				case "scrollbars":
-				case "paperPrintScale":
-					otherProperties.put(jsonKey, String.valueOf(jsonObj.getInt(jsonKey)));
-					break;
-				// boolean
-				case "showInMenu":
-				case "transparent":
-					otherProperties.put(jsonKey, String.valueOf(jsonObj.getBoolean(jsonKey)));
-					break;
-				case "items":
-					
-					break;
-				default:
-					otherProperties.put(jsonKey, jsonObj.getString(jsonKey));
+				// System.out.println(jsonKey);
+				// jsonObj = PRIVATE, predefined in
+				// ElementDatatype.newElementKeyValueDatatypes()
+				if (elementKeyValueDatatypes.containsKey(jsonKey)) {
+					continue;
 				}
-				System.out.println(jsonKey);
+				// jsonObj = INTEGER
+				try {
+					otherProperties.put(jsonKey, String.valueOf(jsonObj.getInt(jsonKey)));
+					elementKeyValueDatatypes.put(jsonKey, ElementDatatype.INTEGER);
+					continue;
+				} catch (JSONException e) {
+				}
+				// jsonObj = BOOLEAN
+				try {
+					otherProperties.put(jsonKey, String.valueOf(jsonObj.getBoolean(jsonKey)));
+					elementKeyValueDatatypes.put(jsonKey, ElementDatatype.BOOLEAN);
+					continue;
+				} catch (JSONException e) {
+				}
+				// jsonObj = STRING, if not = ERROR
+				otherProperties.put(jsonKey, String.valueOf(jsonObj.getString(jsonKey)));
+				elementKeyValueDatatypes.put(jsonKey, ElementDatatype.STRING);
+
 			}
-			
 
 		} catch (JSONException e) {
 			throw new FormTransformerException(e);
 		}
-		System.out.println(this.uuid);
+
 	}
 
 	// HASH & EQUALS
@@ -96,6 +94,14 @@ public abstract class Element {
 		return true;
 	}
 
+	// TOSTRING
+
+	@Override
+	public String toString() {
+		return this.getClass() + "\n[uuid=" + uuid + ", name=" + name + ", typeid=" + typeid + ", \notherProperties="
+				+ otherProperties + ", \nelementKeyValueDatatypes=" + elementKeyValueDatatypes + "]";
+	}
+
 	// GETTERS & SETTERS
 
 	public Map<String, String> getOtherProperties() {
@@ -112,6 +118,10 @@ public abstract class Element {
 
 	public int getTypeid() {
 		return typeid;
+	}
+
+	public Map<String, ElementDatatype> getElementKeyValueDatatypes() {
+		return elementKeyValueDatatypes;
 	}
 
 	// OTHERS

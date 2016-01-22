@@ -10,11 +10,11 @@ public class FormTransformer {
 		
 		try {
 			String path = "C:/Users/Geert/workspaces/servoy7gh_workspace/formTransformer7test/forms/testForm.frm";
-			//String path = "C:/Users/Geert/workspaces/servoy7gh_workspace/formTransformer7test/forms/testForm8.txt";
-			//String path = "C:/Users/Geert/workspaces/servoy7gh_workspace/formTransformer7test/forms/testForm.txt";
 			String test = FileDAO.readFile(path);
 			
 			Form form = new Form(test);
+			
+			//System.out.println(form);
 			
 		} catch (FormTransformerException e) {
 			e.printStackTrace();
