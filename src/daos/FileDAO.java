@@ -19,7 +19,13 @@ public class FileDAO {
 		byte[] encoded;
 		try {
 			encoded = Files.readAllBytes(Paths.get(path));
-			return new String(encoded, StandardCharsets.UTF_8);
+			String diryString =  new String(encoded, StandardCharsets.UTF_8);
+			
+			diryString = diryString.replaceAll("\\\\\"'", "'");
+			diryString = diryString.replaceAll("'\\\\\"", "'");
+			diryString = diryString.replaceAll("\\\\\n", "");
+			
+			return diryString;
 		} catch (IOException e) {
 			throw new FormTransformerException(e);
 		}

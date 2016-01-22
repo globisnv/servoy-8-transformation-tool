@@ -3,14 +3,18 @@ package entities;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.json.JSONObject;
+
+import exceptions.FormTransformerException;
+
 public class Form extends Element {
 	
 	private Set<FormElement> items; 
 
 	// CONSTRUCTORS
 	
-	public Form(String uuid, String name, int typeid) {
-		super(uuid, name, typeid);
+	public Form(String jsonString) {
+		super(jsonString);
 		this.items = new LinkedHashSet<>();
 	}
 
@@ -24,6 +28,13 @@ public class Form extends Element {
 	
 	public void addItem(FormElement formElement) {
 		this.items.add(formElement);
+	}
+
+	@Override
+	public void parseJson(JSONObject jsonObj) {
+		// TODO
+		throw new FormTransformerException(new Exception("not yet implemented"));
+		
 	}
 
 	
