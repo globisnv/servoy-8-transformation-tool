@@ -79,17 +79,21 @@ public class Form extends Element {
 
 		for (FormElement item : this.items) {
 			switch (item.getTypeid()) {
+			//
 			case ElementTypeID.INPUT:
 				FormElement oldLabel = getLabelForName(item.getName());
+				/*
 				FormElement newItem = new FormElement(UUID.randomUUID().toString(), this.getName(),
 						ElementTypeID.MD_INPUT);
 				newItem.addOtherProperty("typeName", ElementTypeID.MD_INPUT_Name);
 
-				newForm.addItem(newItem);
+				newForm.addItem(newItem);*/
 				item.setTransformed(true);
 				oldLabel.setTransformed(true);
 				break;
+			//	
 			default:
+				newForm.addItem(item);
 				break;
 			}
 
@@ -119,11 +123,20 @@ public class Form extends Element {
 		StringBuilder builder = new StringBuilder(super.toServoyForm());
 		builder.append("," + CRLF);
 		builder.append("items: [" + CRLF);
+		int builderLengthNoItems = builder.length();
 		
 		for (FormElement item : this.getItems()) {
-			builder.append(item.toServoyForm());
+			if (!item.isTransformed()) {
+				builder.append("{" + CRLF);
+				builder.append(item.toServoyForm());
+				builder.append("}").append("," + CRLF);
+			}
+			
 		}
-		builder.append("]" + CRLF);
+		if (builder.lastIndexOf(",") > builderLengthNoItems) {
+			builder.setLength(builder.length() - 3);
+		}
+		builder.append(CRLF + "]" + CRLF);
 		return builder.toString();
 	}
 	

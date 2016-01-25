@@ -164,22 +164,21 @@ public abstract class Element {
 
 	public String toServoyForm() {
 		StringBuilder builder = new StringBuilder();
+		// TODO : alle elementen (form / formelement) wegschrijven met NIEUWE uuid ?
 		builder.append("uuid: ").append(QM).append(this.getUuid()).append(QM).append(",").append(CRLF);
 		builder.append("typeid: ").append(this.getTypeid()).append(",").append(CRLF);
 		builder.append("name: ").append(QM).append(this.getName()).append(QM).append(",").append(CRLF);
-
-		int i = 0;
+		int builderLengthNoOtherProps = builder.length();
+		
 		for (Entry<String, String> otherProp : this.otherProperties.entrySet()) {
 			String propValue = otherProp.getValue();
 			if (Element.getElementKeyValueDatatype(otherProp.getKey()) == ElementDatatype.STRING) {
 				propValue = QM + propValue + QM;
 			}
-			builder.append(otherProp.getKey()).append(": ").append(propValue);
-			if (++i < this.otherProperties.size()) {
-				builder.append(",");
-			}
-			builder.append(CRLF);
-			
+			builder.append(otherProp.getKey()).append(": ").append(propValue).append(",").append(CRLF);
+		}
+		if (builder.lastIndexOf(",") > builderLengthNoOtherProps) {
+			builder.setLength(builder.length() - 3);
 		}
 		return builder.toString();
 	}
