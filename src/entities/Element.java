@@ -18,6 +18,7 @@ public abstract class Element {
 	private final int typeid;
 	private Map<String, String> otherProperties;
 	private Map<String, ElementDatatype> elementKeyValueDatatypes = ElementDatatype.newElementKeyValueDatatypes();
+	private boolean transformed = false;
 
 	public Element(String jsonString) {
 		try {
@@ -123,7 +124,17 @@ public abstract class Element {
 	public Map<String, ElementDatatype> getElementKeyValueDatatypes() {
 		return elementKeyValueDatatypes;
 	}
+	
+	public boolean isTransformed() {
+		return transformed;
+	}
 
+	public void setTransformed(boolean transformed) {
+		this.transformed = transformed;
+	}
+
+	
+	
 	// OTHERS
 
 	public void addOtherProperty(String key, String value) {
@@ -133,12 +144,12 @@ public abstract class Element {
 	public String toJson() {
 		throw new FormTransformerException(new Exception("not yet implemented"));
 	}
-
+/*
 	public void parseJson(String jsonString) {
 		JSONObject jsonObj = new JSONObject(jsonString);
 		this.parseJson(jsonObj);
 	}
 
 	public abstract void parseJson(JSONObject jsonObj);
-
+*/
 }

@@ -51,13 +51,20 @@ public class Form extends Element {
 		this.items.add(formElement);
 	}
 
-	@Override
+	/*
 	public void parseJson(JSONObject jsonObj) {
 		// TODO
 		throw new FormTransformerException(new Exception("not yet implemented"));
 		
-	}
+	}*/
 
+	public void transform7to8() {
+		
+		if (this.isTransformed()) {
+			return;
+		}
+		
+	}
 	
 	
 }

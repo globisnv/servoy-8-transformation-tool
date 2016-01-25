@@ -1,9 +1,5 @@
 package entities;
 
-import org.json.JSONObject;
-
-import exceptions.FormTransformerException;
-
 public class FormElement extends Element {
 
 	// CONSTRUCTORS
@@ -16,12 +12,12 @@ public class FormElement extends Element {
 	// GETTERS & SETTERS
 	
 	// OTHERS
-	
+	/*
 	@Override
 	public void parseJson(JSONObject jsonObj) {
 		// TODO
 		throw new FormTransformerException(new Exception("not yet implemented"));
 		
-	}
+	}*/
 
 }

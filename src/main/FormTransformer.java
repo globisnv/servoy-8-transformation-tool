@@ -12,8 +12,9 @@ public class FormTransformer {
 			String path = "C:/Users/Geert/workspaces/servoy7gh_workspace/formTransformer7test/forms/testForm.frm";
 			String test = FileDAO.readFile(path);
 			
-			Form form = new Form(test);
+			Form form = new Form("{"+test+"}");
 			
+			FileDAO.writeFile("d:/test.gha");
 			//System.out.println(form);
 			
 		} catch (FormTransformerException e) {
