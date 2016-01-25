@@ -8,6 +8,11 @@ public class FormElement extends Element {
 		super(jsonString);
 		
 	}
+
+	public FormElement(String uuid, String name, int typeid) {
+		super(uuid, name, typeid);
+	}
+
 	
 	// GETTERS & SETTERS
 	
@@ -19,5 +24,14 @@ public class FormElement extends Element {
 		throw new FormTransformerException(new Exception("not yet implemented"));
 		
 	}*/
-
+	
+	@Override
+	public String toServoyForm() {
+		return super.toServoyForm();
+	}
+	
+	
+	
+	
+	
 }

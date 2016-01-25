@@ -32,9 +32,9 @@ public class FileDAO {
 
 	}
 
-	public static void writeFile(String path) throws FormTransformerException {
+	public static void writeFile(String path, String fileContent) throws FormTransformerException {
 		try {
-			Files.write(Paths.get(path), "My string to save".getBytes("utf-8"), StandardOpenOption.CREATE,
+			Files.write(Paths.get(path), fileContent.getBytes("utf-8"), StandardOpenOption.CREATE,
 					StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
 			throw new FormTransformerException(e);

@@ -9,5 +9,6 @@ src/entities/Element.java -text
 src/entities/Form.java -text
 src/entities/FormElement.java -text
 src/enums/ElementDatatype.java -text
+src/enums/ElementTypeID.java -text
 src/exceptions/FormTransformerException.java -text
 src/main/FormTransformer.java -text

@@ -3,6 +3,7 @@ package entities;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.json.JSONException;
@@ -13,12 +14,26 @@ import exceptions.FormTransformerException;
 
 public abstract class Element {
 
+	public final String CRLF = System.getProperty("line.separator");
+	public final char QM = '"'; // quotation mark
+
 	private final String uuid;
 	private final String name;
 	private final int typeid;
 	private Map<String, String> otherProperties;
-	private Map<String, ElementDatatype> elementKeyValueDatatypes = ElementDatatype.newElementKeyValueDatatypes();
+	private static Map<String, ElementDatatype> elementKeyValueDatatypes = ElementDatatype
+			.newElementKeyValueDatatypes();
 	private boolean transformed = false;
+
+	// CONSTRUCTORS
+
+	protected Element(String uuid, String name, int typeid) {
+		super();
+		this.uuid = uuid;
+		this.name = name;
+		this.typeid = typeid;
+		this.otherProperties = new HashMap<>();
+	}
 
 	public Element(String jsonString) {
 		try {
@@ -63,6 +78,7 @@ public abstract class Element {
 			}
 
 		} catch (JSONException e) {
+			System.out.println("Element/jsonString = " + jsonString);
 			throw new FormTransformerException(e);
 		}
 
@@ -100,13 +116,17 @@ public abstract class Element {
 	@Override
 	public String toString() {
 		return this.getClass() + "\n[uuid=" + uuid + ", name=" + name + ", typeid=" + typeid + ", \notherProperties="
-				+ otherProperties + ", \nelementKeyValueDatatypes=" + elementKeyValueDatatypes + "]";
+				+ otherProperties;
 	}
 
 	// GETTERS & SETTERS
 
 	public Map<String, String> getOtherProperties() {
 		return otherProperties;
+	}
+
+	public void setOtherProperties(Map<String, String> otherProperties) {
+		this.otherProperties = otherProperties;
 	}
 
 	public String getUuid() {
@@ -121,10 +141,6 @@ public abstract class Element {
 		return typeid;
 	}
 
-	public Map<String, ElementDatatype> getElementKeyValueDatatypes() {
-		return elementKeyValueDatatypes;
-	}
-	
 	public boolean isTransformed() {
 		return transformed;
 	}
@@ -133,23 +149,45 @@ public abstract class Element {
 		this.transformed = transformed;
 	}
 
-	
-	
 	// OTHERS
+
+	public static ElementDatatype getElementKeyValueDatatype(String elementName) {
+		if (elementKeyValueDatatypes.containsKey(elementName)) {
+			return elementKeyValueDatatypes.get(elementName);
+		}
+		return ElementDatatype.STRING;
+	}
 
 	public void addOtherProperty(String key, String value) {
 		this.otherProperties.put(key, value);
 	}
 
-	public String toJson() {
-		throw new FormTransformerException(new Exception("not yet implemented"));
-	}
-/*
-	public void parseJson(String jsonString) {
-		JSONObject jsonObj = new JSONObject(jsonString);
-		this.parseJson(jsonObj);
+	public String toServoyForm() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("uuid: ").append(QM).append(this.getUuid()).append(QM).append(",").append(CRLF);
+		builder.append("typeid: ").append(this.getTypeid()).append(",").append(CRLF);
+		builder.append("name: ").append(QM).append(this.getName()).append(QM).append(",").append(CRLF);
+
+		int i = 0;
+		for (Entry<String, String> otherProp : this.otherProperties.entrySet()) {
+			String propValue = otherProp.getValue();
+			if (Element.getElementKeyValueDatatype(otherProp.getKey()) == ElementDatatype.STRING) {
+				propValue = QM + propValue + QM;
+			}
+			builder.append(otherProp.getKey()).append(": ").append(propValue);
+			if (++i < this.otherProperties.size()) {
+				builder.append(",");
+			}
+			builder.append(CRLF);
+			
+		}
+		return builder.toString();
 	}
 
-	public abstract void parseJson(JSONObject jsonObj);
-*/
+	/*
+	 * public void parseJson(String jsonString) { JSONObject jsonObj = new
+	 * JSONObject(jsonString); this.parseJson(jsonObj); }
+	 * 
+	 * public abstract void parseJson(JSONObject jsonObj);
+	 */
 }
