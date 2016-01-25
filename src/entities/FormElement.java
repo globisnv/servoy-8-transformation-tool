@@ -1,6 +1,12 @@
 package entities;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class FormElement extends Element {
+	
+	private Map<String, String> jsonItem = new HashMap<>();
+	morgen verder !
 
 	// CONSTRUCTORS
 	
@@ -9,8 +15,8 @@ public class FormElement extends Element {
 		
 	}
 
-	public FormElement(String uuid, String name, int typeid) {
-		super(uuid, name, typeid);
+	public FormElement(String name, int typeid) {
+		super(name, typeid);
 	}
 
 	

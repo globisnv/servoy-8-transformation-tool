@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,16 +21,16 @@ public abstract class Element {
 	private final String uuid;
 	private final String name;
 	private final int typeid;
-	private Map<String, String> otherProperties;
+	protected Map<String, String> otherProperties;
 	private static Map<String, ElementDatatype> elementKeyValueDatatypes = ElementDatatype
 			.newElementKeyValueDatatypes();
 	private boolean transformed = false;
 
 	// CONSTRUCTORS
 
-	protected Element(String uuid, String name, int typeid) {
+	protected Element(String name, int typeid) {
 		super();
-		this.uuid = uuid;
+		this.uuid = UUID.randomUUID().toString();
 		this.name = name;
 		this.typeid = typeid;
 		this.otherProperties = new HashMap<>();
@@ -164,7 +165,6 @@ public abstract class Element {
 
 	public String toServoyForm() {
 		StringBuilder builder = new StringBuilder();
-		// TODO : alle elementen (form / formelement) wegschrijven met NIEUWE uuid ?
 		builder.append("uuid: ").append(QM).append(this.getUuid()).append(QM).append(",").append(CRLF);
 		builder.append("typeid: ").append(this.getTypeid()).append(",").append(CRLF);
 		builder.append("name: ").append(QM).append(this.getName()).append(QM).append(",").append(CRLF);

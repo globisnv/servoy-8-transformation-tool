@@ -6,9 +6,10 @@ public class FormTransformerException extends RuntimeException {
 
 	public FormTransformerException(Exception e) {
 		super(e);
-		
 	}
 	
-	
+	public FormTransformerException(String msg) {
+		super(msg);
+	}
 
 }
