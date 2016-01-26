@@ -9,15 +9,14 @@ public class FormTransformer {
 	public static void main(String[] args) {
 		
 		try {
-			//String path = "C:/Users/Geert/workspaces/servoy7gh_workspace/formTransformer7test/forms/labelAndInputForm7.frm";
-			String path = "C:/Users/Geert/workspaces/servoy7gh_workspace/formTransformer7test/forms/testForm.frm";
-			String test = FileDAO.readFile(path);
-			
+			String path = "C:/Users/Geert/workspaces/servoy7gh_workspace/formTransformer7test/forms";
+			Form test = FileDAO.readForm(path);
+			/*
 			Form oldForm = new Form("{"+test+"}");
-			System.out.println(oldForm);
-			Form newForm = oldForm.transform7to8();
+			System.out.println(oldForm);*/
+			Form newForm = test.transform7to8();
 			
-			FileDAO.writeFile("d:/outputTest8Form.frm", newForm.toServoyForm());
+			FileDAO.writeForm("d:/", newForm);
 			
 			System.err.println(newForm);
 			

@@ -13,6 +13,7 @@ import exceptions.FormTransformerException;
 public class Form extends Element {
 
 	private Set<FormElement> items;
+	private String jsFile = null;
 
 	// CONSTRUCTORS
 
@@ -48,9 +49,19 @@ public class Form extends Element {
 
 	// GETTERS & SETTERS
 
+	public String getJsFile() {
+		return jsFile;
+	}
+
+	public void setJsFile(String jsFile) {
+		this.jsFile = jsFile;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
 
 	// OTHERS
-
 
 	public Form transform7to8() throws FormTransformerException {
 
@@ -60,15 +71,17 @@ public class Form extends Element {
 
 		Form newForm = new Form("ng$" + this.name, ElementTypeID.FORM);
 		newForm.otherProperties = this.otherProperties;
+		// TODO : replace uuid methods
+		newForm.jsFile = this.jsFile;
 		try {
 			for (FormElement item : this.items) {
-				
+
 				switch (item.formElementIdentifier()) {
 				//
 				case ElementTypeID.INPUT_TEXTFIELD:
 					FormElement oldLabel = findLabelForName(item.name);
 
-					FormElement newItem = new FormElement("ng$"+item.name, ElementTypeID.MD_INPUT);
+					FormElement newItem = new FormElement("ng$" + item.name, ElementTypeID.MD_INPUT);
 					newItem.otherProperties.put("typeName", ElementTypeID.MD_INPUT_Name);
 					// other props - if present
 					FormElement.moveFromOtherProperties(item.otherProperties, newItem.otherProperties, "location");
@@ -114,8 +127,6 @@ public class Form extends Element {
 		return noLabelFound;
 	}
 
-	
-
 	@Override
 	public String toServoyForm() {
 
@@ -123,7 +134,7 @@ public class Form extends Element {
 		builder.append("," + CRLF);
 		builder.append("items: [" + CRLF);
 		int builderLengthNoItems = builder.length();
-		
+
 		for (FormElement item : this.items) {
 			if (!item.transformed) {
 				builder.append("{" + CRLF);
