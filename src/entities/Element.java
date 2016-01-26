@@ -18,13 +18,13 @@ public abstract class Element {
 	public final String CRLF = System.getProperty("line.separator");
 	public final char QM = '"'; // quotation mark
 
-	private final String uuid;
-	private final String name;
-	private final int typeid;
+	protected final String uuid;
+	protected final String name;
+	protected final int typeid;
 	protected Map<String, String> otherProperties;
-	private static Map<String, ElementDatatype> elementKeyValueDatatypes = ElementDatatype
+	protected static Map<String, ElementDatatype> elementKeyValueDatatypes = ElementDatatype
 			.newElementKeyValueDatatypes();
-	private boolean transformed = false;
+	protected boolean transformed = false;
 
 	// CONSTRUCTORS
 
@@ -36,7 +36,7 @@ public abstract class Element {
 		this.otherProperties = new HashMap<>();
 	}
 
-	public Element(String jsonString) {
+	protected Element(String jsonString) {
 		try {
 			JSONObject jsonObj = new JSONObject(jsonString);
 
@@ -52,7 +52,6 @@ public abstract class Element {
 			Set<String> jsonKeySet = jsonObj.keySet();
 
 			for (String jsonKey : jsonKeySet) {
-				// System.out.println(jsonKey);
 				// jsonObj = PRIVATE, predefined in
 				// ElementDatatype.newElementKeyValueDatatypes()
 				if (elementKeyValueDatatypes.containsKey(jsonKey)
@@ -123,52 +122,21 @@ public abstract class Element {
 
 	// GETTERS & SETTERS
 
-	public Map<String, String> getOtherProperties() {
-		return otherProperties;
-	}
-
-	public void setOtherProperties(Map<String, String> otherProperties) {
-		this.otherProperties = otherProperties;
-	}
-
-	public String getUuid() {
-		return uuid;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public int getTypeid() {
-		return typeid;
-	}
-
-	public boolean isTransformed() {
-		return transformed;
-	}
-
-	public void setTransformed(boolean transformed) {
-		this.transformed = transformed;
-	}
-
 	// OTHERS
 
-	public static ElementDatatype getElementKeyValueDatatype(String elementName) {
+	protected static ElementDatatype getElementKeyValueDatatype(String elementName) {
 		if (elementKeyValueDatatypes.containsKey(elementName)) {
 			return elementKeyValueDatatypes.get(elementName);
 		}
 		return ElementDatatype.STRING;
 	}
 
-	public void addOtherProperty(String key, String value) {
-		this.otherProperties.put(key, value);
-	}
 
-	public String toServoyForm() {
+	protected String toServoyForm() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("uuid: ").append(QM).append(this.getUuid()).append(QM).append(",").append(CRLF);
-		builder.append("typeid: ").append(this.getTypeid()).append(",").append(CRLF);
-		builder.append("name: ").append(QM).append(this.getName()).append(QM).append(",").append(CRLF);
+		builder.append("uuid: ").append(QM).append(this.uuid).append(QM).append(",").append(CRLF);
+		builder.append("typeid: ").append(this.typeid).append(",").append(CRLF);
+		builder.append("name: ").append(QM).append(this.name).append(QM).append(",").append(CRLF);
 		int builderLengthNoOtherProps = builder.length();
 
 		for (Entry<String, String> otherProp : this.otherProperties.entrySet()) {
@@ -184,10 +152,5 @@ public abstract class Element {
 		return builder.toString();
 	}
 
-	/*
-	 * public void parseJson(String jsonString) { JSONObject jsonObj = new
-	 * JSONObject(jsonString); this.parseJson(jsonObj); }
-	 * 
-	 * public abstract void parseJson(JSONObject jsonObj);
-	 */
+
 }

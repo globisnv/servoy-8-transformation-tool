@@ -14,24 +14,19 @@ public class FormElement extends Element {
 
 	// CONSTRUCTORS
 
-	public FormElement(String jsonString) {
+	protected FormElement(String jsonString) {
 		super(jsonString);
 
 	}
 
-	public FormElement(String name, int typeid) {
+	protected FormElement(String name, int typeid) {
 		super(name, typeid);
 	}
 
 	// GETTERS & SETTERS
 
 	// OTHERS
-	/*
-	 * @Override public void parseJson(JSONObject jsonObj) { // TODO throw new
-	 * FormTransformerException(new Exception("not yet implemented"));
-	 * 
-	 * }
-	 */
+	
 
 	@Override
 	public String toServoyForm() {
@@ -71,12 +66,12 @@ public class FormElement extends Element {
 		// distinguished by multiplying with -displayType
 		int negComponentToIdentifyDiffInputs = 1;
 		try {
-			if (this.getTypeid() == ElementTypeID.INPUT_GENERAL && this.otherProperties.containsKey("displayType")) {
+			if (this.typeid == ElementTypeID.INPUT_GENERAL && this.otherProperties.containsKey("displayType")) {
 				negComponentToIdentifyDiffInputs = -1 * Integer.valueOf(this.otherProperties.get("displayType"));
 			}
 		} catch (NumberFormatException e) {
 		}
-		return negComponentToIdentifyDiffInputs * this.getTypeid();
+		return negComponentToIdentifyDiffInputs * this.typeid;
 	}
 
 }

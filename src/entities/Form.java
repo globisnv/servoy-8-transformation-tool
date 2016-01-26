@@ -16,7 +16,7 @@ public class Form extends Element {
 
 	// CONSTRUCTORS
 
-	public Form(String name, int typeid) {
+	protected Form(String name, int typeid) {
 		super(name, typeid);
 		this.items = new LinkedHashSet<>();
 	}
@@ -48,69 +48,51 @@ public class Form extends Element {
 
 	// GETTERS & SETTERS
 
-	public Set<FormElement> getItems() {
-		return items;
-	}
 
 	// OTHERS
 
-	public void addItem(FormElement formElement) {
-		this.items.add(formElement);
-	}
-
-	/*
-	 * public void parseJson(JSONObject jsonObj) { // TODO throw new
-	 * FormTransformerException(new Exception("not yet implemented"));
-	 * 
-	 * }
-	 */
 
 	public Form transform7to8() throws FormTransformerException {
 
-		if (this.isTransformed()) {
+		if (this.transformed) {
 			return null;
 		}
 
-		Form newForm = new Form("ng$" + this.getName(), ElementTypeID.FORM);
-		newForm.setOtherProperties(this.getOtherProperties());
+		Form newForm = new Form("ng$" + this.name, ElementTypeID.FORM);
+		newForm.otherProperties = this.otherProperties;
 		try {
 			for (FormElement item : this.items) {
-				/*
-				System.out.print("** ID = "+item.formElementIdentifier());
-				if (item.getTypeid() == 4) {
-					System.out.print(" / OP = "+ item.otherProperties);
-				}
-				System.out.println();*/
+				
 				switch (item.formElementIdentifier()) {
 				//
 				case ElementTypeID.INPUT_TEXTFIELD:
-					FormElement oldLabel = findLabelForName(item.getName());
+					FormElement oldLabel = findLabelForName(item.name);
 
-					FormElement newItem = new FormElement("ng$"+item.getName(), ElementTypeID.MD_INPUT);
-					newItem.addOtherProperty("typeName", ElementTypeID.MD_INPUT_Name);
+					FormElement newItem = new FormElement("ng$"+item.name, ElementTypeID.MD_INPUT);
+					newItem.otherProperties.put("typeName", ElementTypeID.MD_INPUT_Name);
 					// other props - if present
 					FormElement.moveFromOtherProperties(item.otherProperties, newItem.otherProperties, "location");
 					FormElement.moveFromOtherProperties(item.otherProperties, newItem.otherProperties, "size");
 					FormElement.moveFromOtherProperties(item.otherProperties, newItem.otherProperties, "anchor");
 					// jsonItems
 					FormElement.moveFromOtherProperties(item.otherProperties, newItem.jsonItems, "dataProviderID");
-					newItem.jsonItems.put("label", oldLabel.getName());
+					newItem.jsonItems.put("label", oldLabel.name);
 					// copy remaining other props
 					newItem.jsonItems.putAll(item.otherProperties);
 					// put on form
-					newForm.addItem(newItem);
-					item.setTransformed(true);
-					oldLabel.setTransformed(true);
+					newForm.items.add(newItem);
+					item.transformed = true;
+					oldLabel.transformed = true;
 					//
 					break;
 				//
 				default:
-					newForm.addItem(item);
+					newForm.items.add(item);
 					break;
 				}
 
 			}
-			this.setTransformed(true);
+			this.transformed = true;
 			return newForm;
 		} catch (FormTransformerException e) {
 			throw new FormTransformerException(e);
@@ -120,15 +102,15 @@ public class Form extends Element {
 	private FormElement findLabelForName(String formElementName) {
 
 		for (FormElement item : this.items) {
-			if (item.getTypeid() == ElementTypeID.LABEL) {
-				if (item.getOtherProperties().containsKey("labelFor")
-						&& item.getOtherProperties().get("labelFor").equals(formElementName)) {
+			if (item.typeid == ElementTypeID.LABEL) {
+				if (item.otherProperties.containsKey("labelFor")
+						&& item.otherProperties.get("labelFor").equals(formElementName)) {
 					return item;
 				}
 			}
 		}
 		FormElement noLabelFound = new FormElement("", ElementTypeID.LABEL);
-		noLabelFound.setTransformed(true);
+		noLabelFound.transformed = true;
 		return noLabelFound;
 	}
 
@@ -142,9 +124,8 @@ public class Form extends Element {
 		builder.append("items: [" + CRLF);
 		int builderLengthNoItems = builder.length();
 		
-		for (FormElement item : this.getItems()) {
-			if (!item.isTransformed()) {
-				
+		for (FormElement item : this.items) {
+			if (!item.transformed) {
 				builder.append("{" + CRLF);
 				builder.append(item.toServoyForm());
 				builder.append(CRLF + "}").append("," + CRLF);
