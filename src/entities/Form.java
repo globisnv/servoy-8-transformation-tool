@@ -65,13 +65,13 @@ public class Form extends Element {
 
 	public Form transform7to8() throws FormTransformerException {
 
-		if (this.transformed) {
+		if (this.isTransformed()) {
 			return null;
 		}
 
 		Form newForm = new Form("ng$" + this.name, ElementTypeID.FORM);
 		newForm.otherProperties = this.otherProperties;
-		// TODO : replace uuid methods
+		
 		newForm.jsFile = this.jsFile;
 		try {
 			for (FormElement oldFe : this.items) {
@@ -94,19 +94,22 @@ public class Form extends Element {
 					newFe.jsonItems.putAll(oldFe.otherProperties);
 					// put on form
 					newForm.items.add(newFe);
-					oldFe.transformed = true;
-					oldLabel.transformed = true;
+					oldFe.setTransformedAsTrue();
+					oldLabel.setTransformedAsTrue();
 					//
 					break;
 				//
 				default:
-					newForm.items.add(new FormElement(oldFe));
-					oldFe.transformed = true;
+					if (!oldFe.isTransformed()) {
+						newForm.items.add(new FormElement(oldFe));
+						oldFe.setTransformedAsTrue();
+					}
+					
 					break;
 				}
 
 			}
-			this.transformed = true;
+			this.setTransformedAsTrue();
 			return newForm;
 		} catch (FormTransformerException e) {
 			throw new FormTransformerException(e);
@@ -124,7 +127,7 @@ public class Form extends Element {
 			}
 		}
 		FormElement noLabelFound = new FormElement("", ElementTypeID.LABEL);
-		noLabelFound.transformed = true;
+		noLabelFound.setTransformedAsTrue();
 		return noLabelFound;
 	}
 
@@ -135,9 +138,10 @@ public class Form extends Element {
 		builder.append("," + CRLF);
 		builder.append("items: [" + CRLF);
 		int builderLengthNoItems = builder.length();
-
+		
 		for (FormElement item : this.items) {
-			if (!item.transformed) {
+			
+			if (!item.isTransformed()) {
 				builder.append("{" + CRLF);
 				builder.append(item.toServoyForm());
 				builder.append(CRLF + "}").append("," + CRLF);

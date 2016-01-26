@@ -19,24 +19,29 @@ public abstract class Element {
 	public final char QM = '"'; // quotation mark
 
 	protected final String uuid;
+	protected Element duplicateOfElement = null;
 	protected final String name;
 	protected final int typeid;
 	protected Map<String, String> otherProperties;
 	protected static Map<String, ElementDatatype> elementKeyValueDatatypes = ElementDatatype
 			.newElementKeyValueDatatypes();
-	protected boolean transformed = false;
-	
+	private boolean transformed = false;
 
 	// CONSTRUCTORS
 
 	protected Element(Element element) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
+		// if element is created out of another,
+		// and the "transformed" state of one of them is set as TRUE,
+		// then both "transformed" states have to be set as TRUE
+		this.duplicateOfElement = element;
+		element.duplicateOfElement = this.duplicateOfElement;
 		this.name = element.name;
 		this.typeid = element.typeid;
 		this.otherProperties = element.otherProperties;
 	}
-	
+
 	protected Element(String name, int typeid) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
@@ -125,11 +130,30 @@ public abstract class Element {
 
 	@Override
 	public String toString() {
-		return super.toString() + "\n[uuid=" + uuid + ", name=" + name + ", typeid=" + typeid + ", \notherProperties="
-				+ otherProperties;
+		StringBuilder builder = new StringBuilder(super.toString());
+		builder.append("\n[uuid=" + uuid);
+		if (this.duplicateOfElement != null) {
+			builder.append(", duplicateOfElement=" + this.duplicateOfElement.uuid);
+		}
+		builder.append(", name=" + name+ ", typeid=" + typeid);
+		builder.append(", \notherProperties=" + otherProperties);
+		return builder.toString();
 	}
 
 	// GETTERS & SETTERS
+
+	public boolean isTransformed() {
+		return this.transformed;
+	}
+
+	public void setTransformedAsTrue() {
+		this.transformed = true;
+		if (this.duplicateOfElement != null && !this.duplicateOfElement.isTransformed()) {
+			this.duplicateOfElement.setTransformedAsTrue();
+			genereert geen output ! waarom ?
+			System.err.println("setting dup as transformed : " + this.duplicateOfElement);
+		}
+	}
 
 	// OTHERS
 
@@ -139,7 +163,6 @@ public abstract class Element {
 		}
 		return ElementDatatype.STRING;
 	}
-
 
 	protected String toServoyForm() {
 		StringBuilder builder = new StringBuilder();
@@ -160,8 +183,7 @@ public abstract class Element {
 		}
 		return builder.toString();
 	}
-	
-	//protected abstract Element deepCopy(Element element);
 
+	// protected abstract Element deepCopy(Element element);
 
 }

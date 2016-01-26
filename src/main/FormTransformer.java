@@ -18,7 +18,7 @@ public class FormTransformer {
 			
 			FileDAO.writeForm("d:/", newForm);
 			
-			System.err.println(newForm);
+			//System.err.println(newForm);
 			
 		} catch (FormTransformerException e) {
 			e.printStackTrace();
