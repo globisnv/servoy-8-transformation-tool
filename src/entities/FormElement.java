@@ -2,42 +2,67 @@ package entities;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import enums.ElementDatatype;
+import exceptions.FormTransformerException;
 
 public class FormElement extends Element {
-	
-	private Map<String, String> jsonItem = new HashMap<>();
-	morgen verder !
+
+	protected Map<String, String> jsonItems = new HashMap<>();
 
 	// CONSTRUCTORS
-	
+
 	public FormElement(String jsonString) {
 		super(jsonString);
-		
+
 	}
 
 	public FormElement(String name, int typeid) {
 		super(name, typeid);
 	}
 
-	
 	// GETTERS & SETTERS
-	
+
 	// OTHERS
 	/*
-	@Override
-	public void parseJson(JSONObject jsonObj) {
-		// TODO
-		throw new FormTransformerException(new Exception("not yet implemented"));
-		
-	}*/
-	
+	 * @Override public void parseJson(JSONObject jsonObj) { // TODO throw new
+	 * FormTransformerException(new Exception("not yet implemented"));
+	 * 
+	 * }
+	 */
+
 	@Override
 	public String toServoyForm() {
-		return super.toServoyForm();
+		StringBuilder builder = new StringBuilder(super.toServoyForm());
+
+		if (this.jsonItems.size() > 0) {
+			
+			builder.append("," + CRLF + "json: {" + CRLF);
+			int builderLengthNoJsonItems = builder.length();
+			
+			for (Entry<String, String> jsonItem : this.jsonItems.entrySet()) {
+				String itemValue = jsonItem.getValue();
+				if (Element.getElementKeyValueDatatype(jsonItem.getKey()) == ElementDatatype.STRING) {
+					itemValue = QM + itemValue + QM;
+				}
+				builder.append(jsonItem.getKey()).append(": ").append(itemValue).append(",").append(CRLF);
+			}
+			if (builder.lastIndexOf(",") > builderLengthNoJsonItems) {
+				builder.setLength(builder.length() - 3);
+			}
+			builder.append("}" + CRLF);
+		}
+		return builder.toString();
 	}
-	
-	
-	
-	
-	
+
+	protected static void moveFromOtherProperties(Map<String, String> source, Map<String, String> destination,
+			String key) throws FormTransformerException {
+		if (source.containsKey(key)) {
+			destination.put(key, source.get(key));
+			source.remove(key);
+		}
+		return;
+	}
+
 }

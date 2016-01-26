@@ -116,7 +116,7 @@ public abstract class Element {
 
 	@Override
 	public String toString() {
-		return this.getClass() + "\n[uuid=" + uuid + ", name=" + name + ", typeid=" + typeid + ", \notherProperties="
+		return super.toString() + "\n[uuid=" + uuid + ", name=" + name + ", typeid=" + typeid + ", \notherProperties="
 				+ otherProperties;
 	}
 

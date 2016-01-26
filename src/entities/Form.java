@@ -80,20 +80,22 @@ public class Form extends Element {
 				case ElementTypeID.INPUT:
 					FormElement oldLabel = findLabelForName(item.getName());
 
-					FormElement newItem = new FormElement(this.getName(), ElementTypeID.MD_INPUT);
+					FormElement newItem = new FormElement("ng$"+item.getName(), ElementTypeID.MD_INPUT);
 					newItem.addOtherProperty("typeName", ElementTypeID.MD_INPUT_Name);
-					newItem.addOtherProperty("location", findInOtherProperties(item, "location"));
-					newItem.addOtherProperty("size", findInOtherProperties(item, "size"));
-					StringBuilder builder = new StringBuilder();
-					builder.append("{");
-					builder.append("dataProviderID: " + QM).append(findInOtherProperties(item, "dataProviderID"))
-							.append(QM + "," + CRLF);
-					builder.append("label: " + QM).append(oldLabel.getName()).append(QM + CRLF);
-					builder.append("}" + CRLF);
-					newItem.addOtherProperty("json", builder.toString());
+					// other props - if present
+					FormElement.moveFromOtherProperties(item.otherProperties, newItem.otherProperties, "location");
+					FormElement.moveFromOtherProperties(item.otherProperties, newItem.otherProperties, "size");
+					FormElement.moveFromOtherProperties(item.otherProperties, newItem.otherProperties, "anchor");
+					// jsonItems
+					FormElement.moveFromOtherProperties(item.otherProperties, newItem.jsonItems, "dataProviderID");
+					newItem.jsonItems.put("label", oldLabel.getName());
+					// copy remaining other props
+					newItem.jsonItems.putAll(item.otherProperties);
+					// put on form
 					newForm.addItem(newItem);
 					item.setTransformed(true);
 					oldLabel.setTransformed(true);
+					//
 					break;
 				//
 				default:
@@ -124,12 +126,7 @@ public class Form extends Element {
 		return noLabelFound;
 	}
 
-	private String findInOtherProperties(FormElement element, String key) throws FormTransformerException {
-		if (element.otherProperties.containsKey(key)) {
-			return element.otherProperties.get(key);
-		}
-		throw new FormTransformerException(key + ": key not found in this.otherProperties !");
-	}
+	
 
 	@Override
 	public String toServoyForm() {
@@ -138,9 +135,10 @@ public class Form extends Element {
 		builder.append("," + CRLF);
 		builder.append("items: [" + CRLF);
 		int builderLengthNoItems = builder.length();
-
+		
 		for (FormElement item : this.getItems()) {
 			if (!item.isTransformed()) {
+				
 				builder.append("{" + CRLF);
 				builder.append(item.toServoyForm());
 				builder.append(CRLF + "}").append("," + CRLF);
