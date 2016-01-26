@@ -25,9 +25,18 @@ public abstract class Element {
 	protected static Map<String, ElementDatatype> elementKeyValueDatatypes = ElementDatatype
 			.newElementKeyValueDatatypes();
 	protected boolean transformed = false;
+	
 
 	// CONSTRUCTORS
 
+	protected Element(Element element) {
+		super();
+		this.uuid = UUID.randomUUID().toString();
+		this.name = element.name;
+		this.typeid = element.typeid;
+		this.otherProperties = element.otherProperties;
+	}
+	
 	protected Element(String name, int typeid) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
@@ -151,6 +160,8 @@ public abstract class Element {
 		}
 		return builder.toString();
 	}
+	
+	//protected abstract Element deepCopy(Element element);
 
 
 }

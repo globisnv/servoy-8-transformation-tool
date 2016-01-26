@@ -74,33 +74,34 @@ public class Form extends Element {
 		// TODO : replace uuid methods
 		newForm.jsFile = this.jsFile;
 		try {
-			for (FormElement item : this.items) {
+			for (FormElement oldFe : this.items) {
 
-				switch (item.formElementIdentifier()) {
+				switch (oldFe.formElementIdentifier()) {
 				//
 				case ElementTypeID.INPUT_TEXTFIELD:
-					FormElement oldLabel = findLabelForName(item.name);
+					FormElement oldLabel = findLabelForName(oldFe.name);
 
-					FormElement newItem = new FormElement("ng$" + item.name, ElementTypeID.MD_INPUT);
-					newItem.otherProperties.put("typeName", ElementTypeID.MD_INPUT_Name);
+					FormElement newFe = new FormElement("ng$" + oldFe.name, ElementTypeID.MD_INPUT);
+					newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_Name);
 					// other props - if present
-					FormElement.moveFromOtherProperties(item.otherProperties, newItem.otherProperties, "location");
-					FormElement.moveFromOtherProperties(item.otherProperties, newItem.otherProperties, "size");
-					FormElement.moveFromOtherProperties(item.otherProperties, newItem.otherProperties, "anchor");
+					FormElement.moveFromOtherProperties(oldFe.otherProperties, newFe.otherProperties, "location");
+					FormElement.moveFromOtherProperties(oldFe.otherProperties, newFe.otherProperties, "size");
+					FormElement.moveFromOtherProperties(oldFe.otherProperties, newFe.otherProperties, "anchor");
 					// jsonItems
-					FormElement.moveFromOtherProperties(item.otherProperties, newItem.jsonItems, "dataProviderID");
-					newItem.jsonItems.put("label", oldLabel.name);
+					FormElement.moveFromOtherProperties(oldFe.otherProperties, newFe.jsonItems, "dataProviderID");
+					newFe.jsonItems.put("label", oldLabel.name);
 					// copy remaining other props
-					newItem.jsonItems.putAll(item.otherProperties);
+					newFe.jsonItems.putAll(oldFe.otherProperties);
 					// put on form
-					newForm.items.add(newItem);
-					item.transformed = true;
+					newForm.items.add(newFe);
+					oldFe.transformed = true;
 					oldLabel.transformed = true;
 					//
 					break;
 				//
 				default:
-					newForm.items.add(item);
+					newForm.items.add(new FormElement(oldFe));
+					oldFe.transformed = true;
 					break;
 				}
 

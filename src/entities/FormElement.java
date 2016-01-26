@@ -23,10 +23,14 @@ public class FormElement extends Element {
 		super(name, typeid);
 	}
 
+	protected FormElement(FormElement fe) {
+		super(fe);
+		this.jsonItems = fe.jsonItems;
+	}
+
 	// GETTERS & SETTERS
 
 	// OTHERS
-	
 
 	@Override
 	public String toServoyForm() {
@@ -73,5 +77,7 @@ public class FormElement extends Element {
 		}
 		return negComponentToIdentifyDiffInputs * this.typeid;
 	}
+
+	
 
 }

@@ -11,8 +11,8 @@ import exceptions.FormTransformerException;
 
 public class FileDAO {
 
-	private final static String FILE_NAME = "labelAndInputForm7";
-	// private final static String FILE_NAME = "testForm";
+	//private final static String FILE_NAME = "labelAndInputForm7";
+	private final static String FILE_NAME = "testForm";
 	private final static String FORM_EXT = ".frm";
 	private final static String JS_EXT = ".js";
 
