@@ -75,9 +75,15 @@ public class Form extends Element {
 		newForm.setOtherProperties(this.getOtherProperties());
 		try {
 			for (FormElement item : this.items) {
-				switch (item.getTypeid()) {
+				/*
+				System.out.print("** ID = "+item.formElementIdentifier());
+				if (item.getTypeid() == 4) {
+					System.out.print(" / OP = "+ item.otherProperties);
+				}
+				System.out.println();*/
+				switch (item.formElementIdentifier()) {
 				//
-				case ElementTypeID.INPUT:
+				case ElementTypeID.INPUT_TEXTFIELD:
 					FormElement oldLabel = findLabelForName(item.getName());
 
 					FormElement newItem = new FormElement("ng$"+item.getName(), ElementTypeID.MD_INPUT);

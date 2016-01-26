@@ -9,8 +9,8 @@ public class FormTransformer {
 	public static void main(String[] args) {
 		
 		try {
-			String path = "C:/Users/Geert/workspaces/servoy7gh_workspace/formTransformer7test/forms/labelAndInputForm7.frm";
-			//String path = "C:/Users/Geert/workspaces/servoy7gh_workspace/formTransformer7test/forms/testForm.frm";
+			//String path = "C:/Users/Geert/workspaces/servoy7gh_workspace/formTransformer7test/forms/labelAndInputForm7.frm";
+			String path = "C:/Users/Geert/workspaces/servoy7gh_workspace/formTransformer7test/forms/testForm.frm";
 			String test = FileDAO.readFile(path);
 			
 			Form oldForm = new Form("{"+test+"}");

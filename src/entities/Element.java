@@ -55,7 +55,8 @@ public abstract class Element {
 				// System.out.println(jsonKey);
 				// jsonObj = PRIVATE, predefined in
 				// ElementDatatype.newElementKeyValueDatatypes()
-				if (elementKeyValueDatatypes.containsKey(jsonKey)) {
+				if (elementKeyValueDatatypes.containsKey(jsonKey)
+						&& elementKeyValueDatatypes.get(jsonKey) == ElementDatatype.PRIVATE) {
 					continue;
 				}
 				// jsonObj = INTEGER
@@ -169,7 +170,7 @@ public abstract class Element {
 		builder.append("typeid: ").append(this.getTypeid()).append(",").append(CRLF);
 		builder.append("name: ").append(QM).append(this.getName()).append(QM).append(",").append(CRLF);
 		int builderLengthNoOtherProps = builder.length();
-		
+
 		for (Entry<String, String> otherProp : this.otherProperties.entrySet()) {
 			String propValue = otherProp.getValue();
 			if (Element.getElementKeyValueDatatype(otherProp.getKey()) == ElementDatatype.STRING) {

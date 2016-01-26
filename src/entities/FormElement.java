@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import enums.ElementDatatype;
+import enums.ElementTypeID;
 import exceptions.FormTransformerException;
 
 public class FormElement extends Element {
@@ -37,10 +38,10 @@ public class FormElement extends Element {
 		StringBuilder builder = new StringBuilder(super.toServoyForm());
 
 		if (this.jsonItems.size() > 0) {
-			
+
 			builder.append("," + CRLF + "json: {" + CRLF);
 			int builderLengthNoJsonItems = builder.length();
-			
+
 			for (Entry<String, String> jsonItem : this.jsonItems.entrySet()) {
 				String itemValue = jsonItem.getValue();
 				if (Element.getElementKeyValueDatatype(jsonItem.getKey()) == ElementDatatype.STRING) {
@@ -63,6 +64,19 @@ public class FormElement extends Element {
 			source.remove(key);
 		}
 		return;
+	}
+
+	protected int formElementIdentifier() {
+		// problem : multiple form elements have typeid = 4 ;
+		// distinguished by multiplying with -displayType
+		int negComponentToIdentifyDiffInputs = 1;
+		try {
+			if (this.getTypeid() == ElementTypeID.INPUT_GENERAL && this.otherProperties.containsKey("displayType")) {
+				negComponentToIdentifyDiffInputs = -1 * Integer.valueOf(this.otherProperties.get("displayType"));
+			}
+		} catch (NumberFormatException e) {
+		}
+		return negComponentToIdentifyDiffInputs * this.getTypeid();
 	}
 
 }
