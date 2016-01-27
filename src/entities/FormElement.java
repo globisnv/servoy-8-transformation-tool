@@ -110,15 +110,10 @@ public class FormElement extends Element {
 		FormElement.moveFromOtherProperties(this.otherProperties, newFe.otherProperties, "size");
 		FormElement.moveFromOtherProperties(this.otherProperties, newFe.otherProperties, "anchor");
 		// jsonItems create label + copy remaining other props
-		//FormElement.moveFromOtherProperties(oldFe.otherProperties, newFe.jsonItems, "dataProviderID");
 		newFe.jsonItems.put("label", oldLabelName);
 		newFe.jsonItems.putAll(this.otherProperties);
-		// put on form
-		// newForm.items.add(newFe);
+		
 		this.setTransformedTrue();
-		//oldLabelName.setTransformedAsTrue();
-
-		//
 		return newFe;
 	}
 

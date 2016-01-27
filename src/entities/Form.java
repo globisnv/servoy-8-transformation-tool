@@ -56,7 +56,7 @@ public class Form extends Element {
 	public void setJsFile(String jsFile) {
 		this.jsFile = jsFile;
 	}
-	
+
 	public String getName() {
 		return this.name;
 	}
@@ -71,7 +71,7 @@ public class Form extends Element {
 
 		Form newForm = new Form("ng$" + this.name, ElementTypeID.FORM);
 		newForm.otherProperties = this.otherProperties;
-		
+
 		newForm.jsFile = this.jsFile;
 		try {
 			for (FormElement oldFe : this.items) {
@@ -84,26 +84,7 @@ public class Form extends Element {
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME, oldLabelName));
 					break;
-					/*
-					FormElement oldLabel = findLabelForName(oldFe.name);
-
-					FormElement newFe = new FormElement("ng$" + oldFe.name, ElementTypeID.MD_INPUT);
-					newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME);
-					// other props - if present
-					FormElement.moveFromOtherProperties(oldFe.otherProperties, newFe.otherProperties, "location");
-					FormElement.moveFromOtherProperties(oldFe.otherProperties, newFe.otherProperties, "size");
-					FormElement.moveFromOtherProperties(oldFe.otherProperties, newFe.otherProperties, "anchor");
-					// jsonItems
-					FormElement.moveFromOtherProperties(oldFe.otherProperties, newFe.jsonItems, "dataProviderID");
-					newFe.jsonItems.put("label", oldLabel.name);
-					// copy remaining other props
-					newFe.jsonItems.putAll(oldFe.otherProperties);
-					// put on form
-					newForm.items.add(newFe);
-					oldFe.setTransformedAsTrue();
-					oldLabel.setTransformedAsTrue();*/
-					//
-					//break;
+				//
 				case ElementTypeID.INPUT_CHECKBOX:
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME, oldLabelName));
@@ -114,7 +95,6 @@ public class Form extends Element {
 						oldFe.setTransformedTrue();
 						newForm.items.add(FormElement.deepCopySyncedTransform(oldFe, false));
 					}
-					
 					break;
 				}
 
@@ -138,10 +118,6 @@ public class Form extends Element {
 				}
 			}
 		}
-		/*
-		FormElement noLabelFound = new FormElement("", ElementTypeID.LABEL);
-		noLabelFound.setTransformedAsTrue();
-		return noLabelFound;*/
 		return "";
 	}
 
@@ -152,9 +128,9 @@ public class Form extends Element {
 		builder.append("," + CRLF);
 		builder.append("items: [" + CRLF);
 		int builderLengthNoItems = builder.length();
-		
+
 		for (FormElement item : this.items) {
-			
+
 			if (!item.isTransformed()) {
 				builder.append("{" + CRLF);
 				builder.append(item.toServoyForm());
@@ -168,7 +144,5 @@ public class Form extends Element {
 		builder.append(CRLF + "]" + CRLF);
 		return builder.toString();
 	}
-	
-	
 
 }
