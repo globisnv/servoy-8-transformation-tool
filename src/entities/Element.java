@@ -29,16 +29,13 @@ public abstract class Element {
 
 	// CONSTRUCTORS
 
-	protected Element(Element element) {
+	protected Element(Element element, boolean transformedValue) {
 		super();
 		this.uuid = UUID.randomUUID().toString();
-		// if element is created out of another,
-		// and the "transformed" state of one of them is set as TRUE,
-		// then both "transformed" states have to be set as TRUE
 		this.duplicateOfElement = element;
-		element.duplicateOfElement = this.duplicateOfElement;
 		this.name = element.name;
 		this.typeid = element.typeid;
+		this.transformed = transformedValue;
 		this.otherProperties = element.otherProperties;
 	}
 
@@ -150,8 +147,6 @@ public abstract class Element {
 		this.transformed = true;
 		if (this.duplicateOfElement != null && !this.duplicateOfElement.isTransformed()) {
 			this.duplicateOfElement.setTransformedAsTrue();
-			genereert geen output ! waarom ?
-			System.err.println("setting dup as transformed : " + this.duplicateOfElement);
 		}
 	}
 
@@ -184,6 +179,6 @@ public abstract class Element {
 		return builder.toString();
 	}
 
-	// protected abstract Element deepCopy(Element element);
+	
 
 }

@@ -101,8 +101,8 @@ public class Form extends Element {
 				//
 				default:
 					if (!oldFe.isTransformed()) {
-						newForm.items.add(new FormElement(oldFe));
 						oldFe.setTransformedAsTrue();
+						newForm.items.add(FormElement.deepCopySyncedTransform(oldFe, false));
 					}
 					
 					break;

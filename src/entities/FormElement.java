@@ -23,8 +23,8 @@ public class FormElement extends Element {
 		super(name, typeid);
 	}
 
-	protected FormElement(FormElement fe) {
-		super(fe);
+	private FormElement(FormElement fe, boolean transformedValue) {
+		super(fe, transformedValue);
 		this.jsonItems = fe.jsonItems;
 	}
 
@@ -78,6 +78,13 @@ public class FormElement extends Element {
 		return negComponentToIdentifyDiffInputs * this.typeid;
 	}
 
-	
+	protected static FormElement deepCopySyncedTransform(FormElement oldFe, boolean transformedValue) {
+		// if element is created out of another,
+		// and the "transformed" state of one of them is set as TRUE,
+		// then both "transformed" states have to be set as TRUE
+		FormElement newFe = new FormElement(oldFe, transformedValue);
+		oldFe.duplicateOfElement = newFe;
+		return newFe;
+	}
 
 }
