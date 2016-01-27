@@ -5,21 +5,17 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import entities.Form;
 import exceptions.FormTransformerException;
+import main.FormTransformer;
 
 public class FileDAO {
 
+	private final static String FILE_NAME = "testForm";
 	//private final static String FILE_NAME = "labelAndInputForm7";
-	//private final static String FILE_NAME = "testForm";
-	private final static String FILE_NAME = "labelAndCheckBox7";
+	//private final static String FILE_NAME = "labelAndCheckBox7";
 	private final static String FORM_EXT = ".frm";
 	private final static String JS_EXT = ".js";
 
@@ -37,6 +33,7 @@ public class FileDAO {
 			form = new Form("{" + readFile(pathAndFilename + FORM_EXT) + "}");
 			if (Files.exists(Paths.get(pathAndFilename + JS_EXT))) {
 				form.setJsFile(readFile(pathAndFilename + JS_EXT));
+				FormTransformer.scanForUuids(form.getJsFile());
 			}
 		} catch (FormTransformerException e) {
 			throw new FormTransformerException(e);
@@ -51,14 +48,14 @@ public class FileDAO {
 		try {
 			String outputFrm = form.toServoyForm();
 			String outputJS = form.getJsFile();
-			Map<String, String> replaceMehtodIDs = findMethodUUIDs(outputFrm);
+			
 			if (outputFrm != null) {
-				for (Entry<String, String> entry : replaceMehtodIDs.entrySet()) {
+				for (Entry<String, String> entry : FormTransformer.getUuidMap().entrySet()) {
 					outputFrm = outputFrm.replace(entry.getKey(), entry.getValue());
 				}
 			}
 			if (outputJS != null) {
-				for (Entry<String, String> entry : replaceMehtodIDs.entrySet()) {
+				for (Entry<String, String> entry : FormTransformer.getUuidMap().entrySet()) {
 					outputJS = outputJS.replace(entry.getKey(), entry.getValue());
 				}
 			}
@@ -99,17 +96,5 @@ public class FileDAO {
 		}
 	}
 
-	private static Map<String, String> findMethodUUIDs(String string) {
-
-		//System.out.println("findMethodUUIDs = \n"+string);
-		Map<String, String> methodIDs = new HashMap<>();
-		Pattern REG_EX = Pattern.compile("MethodID:.{1,2}([0-9A-Za-z-]{36})");
-		Matcher m = REG_EX.matcher(string);
-
-		while (m.find()) {
-		    methodIDs.put(m.group(1), UUID.randomUUID().toString());
-		}
-		return methodIDs;
-	}
 
 }
