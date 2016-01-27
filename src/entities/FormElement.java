@@ -19,7 +19,7 @@ public class FormElement extends Element {
 
 	}
 
-	protected FormElement(String name, int typeid) {
+	private FormElement(String name, int typeid) {
 		super(name, typeid);
 	}
 
@@ -56,7 +56,7 @@ public class FormElement extends Element {
 		return builder.toString();
 	}
 
-	protected static void moveFromOtherProperties(Map<String, String> source, Map<String, String> destination,
+	private static void moveFromOtherProperties(Map<String, String> source, Map<String, String> destination,
 			String key) throws FormTransformerException {
 		if (source.containsKey(key)) {
 			destination.put(key, source.get(key));
@@ -84,6 +84,41 @@ public class FormElement extends Element {
 		// then both "transformed" states have to be set as TRUE
 		FormElement newFe = new FormElement(oldFe, transformedValue);
 		oldFe.duplicateOfElement = newFe;
+		return newFe;
+	}
+
+	protected FormElement transform(String mdComponentIdentifier, String oldLabelName)
+			throws FormTransformerException {
+
+		FormElement newFe;
+
+		switch (mdComponentIdentifier) {
+		case ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME:
+			newFe = new FormElement("ng$" + this.name, ElementTypeID.MD_INPUT);
+			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME);
+			break;
+		case ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME:
+			newFe = new FormElement("ng$" + this.name, ElementTypeID.MD_INPUT);
+			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME);
+			break;
+		default:
+			throw new FormTransformerException("Not a valid mdComponentIdentifier !");
+		}
+
+		// other props - if present
+		FormElement.moveFromOtherProperties(this.otherProperties, newFe.otherProperties, "location");
+		FormElement.moveFromOtherProperties(this.otherProperties, newFe.otherProperties, "size");
+		FormElement.moveFromOtherProperties(this.otherProperties, newFe.otherProperties, "anchor");
+		// jsonItems create label + copy remaining other props
+		//FormElement.moveFromOtherProperties(oldFe.otherProperties, newFe.jsonItems, "dataProviderID");
+		newFe.jsonItems.put("label", oldLabelName);
+		newFe.jsonItems.putAll(this.otherProperties);
+		// put on form
+		// newForm.items.add(newFe);
+		this.setTransformedTrue();
+		//oldLabelName.setTransformedAsTrue();
+
+		//
 		return newFe;
 	}
 

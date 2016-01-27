@@ -143,10 +143,10 @@ public abstract class Element {
 		return this.transformed;
 	}
 
-	public void setTransformedAsTrue() {
+	public void setTransformedTrue() {
 		this.transformed = true;
 		if (this.duplicateOfElement != null && !this.duplicateOfElement.isTransformed()) {
-			this.duplicateOfElement.setTransformedAsTrue();
+			this.duplicateOfElement.setTransformedTrue();
 		}
 	}
 

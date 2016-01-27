@@ -76,13 +76,19 @@ public class Form extends Element {
 		try {
 			for (FormElement oldFe : this.items) {
 
+				String oldLabelName = "";
 				switch (oldFe.formElementIdentifier()) {
 				//
 				case ElementTypeID.INPUT_TEXTFIELD:
+					// TODO : ifLabelExists method algemeen ?
+					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME, oldLabelName));
+					break;
+					/*
 					FormElement oldLabel = findLabelForName(oldFe.name);
 
 					FormElement newFe = new FormElement("ng$" + oldFe.name, ElementTypeID.MD_INPUT);
-					newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_Name);
+					newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME);
 					// other props - if present
 					FormElement.moveFromOtherProperties(oldFe.otherProperties, newFe.otherProperties, "location");
 					FormElement.moveFromOtherProperties(oldFe.otherProperties, newFe.otherProperties, "size");
@@ -95,13 +101,17 @@ public class Form extends Element {
 					// put on form
 					newForm.items.add(newFe);
 					oldFe.setTransformedAsTrue();
-					oldLabel.setTransformedAsTrue();
+					oldLabel.setTransformedAsTrue();*/
 					//
+					//break;
+				case ElementTypeID.INPUT_CHECKBOX:
+					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME, oldLabelName));
 					break;
 				//
 				default:
 					if (!oldFe.isTransformed()) {
-						oldFe.setTransformedAsTrue();
+						oldFe.setTransformedTrue();
 						newForm.items.add(FormElement.deepCopySyncedTransform(oldFe, false));
 					}
 					
@@ -109,26 +119,30 @@ public class Form extends Element {
 				}
 
 			}
-			this.setTransformedAsTrue();
+			this.setTransformedTrue();
 			return newForm;
 		} catch (FormTransformerException e) {
 			throw new FormTransformerException(e);
 		}
 	}
 
-	private FormElement findLabelForName(String formElementName) {
+	private String ifLabelExistsSetTransformedTrue(String formElementName) {
 
 		for (FormElement item : this.items) {
+			// TODO : als identifier LABEL != BUTTON : herschrijven
 			if (item.typeid == ElementTypeID.LABEL) {
 				if (item.otherProperties.containsKey("labelFor")
 						&& item.otherProperties.get("labelFor").equals(formElementName)) {
-					return item;
+					item.setTransformedTrue();
+					return item.name;
 				}
 			}
 		}
+		/*
 		FormElement noLabelFound = new FormElement("", ElementTypeID.LABEL);
 		noLabelFound.setTransformedAsTrue();
-		return noLabelFound;
+		return noLabelFound;*/
+		return "";
 	}
 
 	@Override
