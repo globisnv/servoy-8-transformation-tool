@@ -105,6 +105,21 @@ public class Form extends Element {
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TEXTAREA_TYPENAME, oldLabelName));
 					break;
 				//
+				case ElementTypeID.INPUT_TYPEAHEAD:
+					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TYPEAHEAD_TYPENAME, oldLabelName));
+					break;
+				//
+				case ElementTypeID.INPUT_RADIO:
+					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_RADIO_TYPENAME, oldLabelName));
+					break;
+				//
+				case ElementTypeID.INPUT_PASSWORD:
+					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_PASSWORD_TYPENAME, oldLabelName));
+					break;
+				//
 				default:
 					if (!oldFe.isTransformed()) {
 						oldFe.setTransformedTrue();

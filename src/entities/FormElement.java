@@ -113,6 +113,18 @@ public class FormElement extends Element {
 			newFe = new FormElement("ng$" + this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_TEXTAREA_TYPENAME);
 			break;
+		case ElementTypeID.MD_INPUT_TYPEAHEAD_TYPENAME:
+			newFe = new FormElement("ng$" + this.name, ElementTypeID.MD_INPUT);
+			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_TYPEAHEAD_TYPENAME);
+			break;
+		case ElementTypeID.MD_INPUT_RADIO_TYPENAME:
+			newFe = new FormElement("ng$" + this.name, ElementTypeID.MD_INPUT);
+			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_RADIO_TYPENAME);
+			break;
+		case ElementTypeID.MD_INPUT_PASSWORD_TYPENAME:
+			newFe = new FormElement("ng$" + this.name, ElementTypeID.MD_INPUT);
+			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_PASSWORD_TYPENAME);
+			break;
 		default:
 			throw new FormTransformerException("Not a valid mdComponentIdentifier ["+mdComponentIdentifier+"] !");
 		}

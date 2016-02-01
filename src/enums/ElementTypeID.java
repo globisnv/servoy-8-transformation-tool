@@ -11,8 +11,11 @@ public class ElementTypeID {
 	public final static int INPUT_TEXTFIELD = 4;
 	public final static int INPUT_TEXTAREA = -4;
 	public final static int INPUT_COMBOBOX = -8;
+	public final static int INPUT_RADIO = -12;
 	public final static int INPUT_CHECKBOX = -16;
 	public final static int INPUT_CALENDAR = -20;
+	public final static int INPUT_PASSWORD = -24;
+	public final static int INPUT_TYPEAHEAD = -40;
 
 	// SERVOY 8
 	public final static int MD_INPUT = 47;
@@ -21,5 +24,8 @@ public class ElementTypeID {
 	public final static String MD_INPUT_CHECKBOX_TYPENAME = "svy-md-Checkbox";
 	public final static String MD_INPUT_COMBOBOX_TYPENAME = "svy-md-Combobox";
 	public final static String MD_INPUT_DATEPICKER_TYPENAME = "svy-md-Datepicker";
+	public final static String MD_INPUT_TYPEAHEAD_TYPENAME = "svy-md-Autocomplete";
+	public final static String MD_INPUT_RADIO_TYPENAME = "svy-md-Radio";
+	public final static String MD_INPUT_PASSWORD_TYPENAME = "svy-md-Password";
 	
 }
