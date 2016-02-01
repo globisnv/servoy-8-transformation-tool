@@ -90,6 +90,16 @@ public class Form extends Element {
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME, oldLabelName));
 					break;
 				//
+				case ElementTypeID.INPUT_COMBOBOX:
+					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_COMBOBOX_TYPENAME, oldLabelName));
+					break;
+				//
+				case ElementTypeID.INPUT_CALENDAR:
+					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_DATEPICKER_TYPENAME, oldLabelName));
+					break;
+				//
 				default:
 					if (!oldFe.isTransformed()) {
 						oldFe.setTransformedTrue();

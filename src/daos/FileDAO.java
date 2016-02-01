@@ -13,9 +13,11 @@ import main.FormTransformer;
 
 public class FileDAO {
 
-	private final static String FILE_NAME = "testForm";
+	//private final static String FILE_NAME = "testForm";
 	//private final static String FILE_NAME = "labelAndInputForm7";
 	//private final static String FILE_NAME = "labelAndCheckBox7";
+	//private final static String FILE_NAME = "_03labelAndComboBox7";
+	private final static String FILE_NAME = "_04labelAndCalendar7";
 	private final static String FORM_EXT = ".frm";
 	private final static String JS_EXT = ".js";
 
@@ -30,7 +32,9 @@ public class FileDAO {
 
 		Form form = null;
 		try {
-			form = new Form("{" + readFile(pathAndFilename + FORM_EXT) + "}");
+			String frmString = readFile(pathAndFilename + FORM_EXT);
+			FormTransformer.scanForImmutableUuids(frmString);
+			form = new Form("{" + frmString + "}");
 			if (Files.exists(Paths.get(pathAndFilename + JS_EXT))) {
 				form.setJsFile(readFile(pathAndFilename + JS_EXT));
 				FormTransformer.scanForUuids(form.getJsFile());

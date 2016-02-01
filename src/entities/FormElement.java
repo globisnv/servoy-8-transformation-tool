@@ -101,6 +101,14 @@ public class FormElement extends Element {
 			newFe = new FormElement("ng$" + this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME);
 			break;
+		case ElementTypeID.MD_INPUT_COMBOBOX_TYPENAME:
+			newFe = new FormElement("ng$" + this.name, ElementTypeID.MD_INPUT);
+			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_COMBOBOX_TYPENAME);
+			break;
+		case ElementTypeID.MD_INPUT_DATEPICKER_TYPENAME:
+			newFe = new FormElement("ng$" + this.name, ElementTypeID.MD_INPUT);
+			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_DATEPICKER_TYPENAME);
+			break;
 		default:
 			throw new FormTransformerException("Not a valid mdComponentIdentifier !");
 		}
