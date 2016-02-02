@@ -125,9 +125,7 @@ public class Form extends Element {
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_BUTTON_TYPENAME, oldLabelName));
 					break;
 				//
-				case ElementTypeID.LABEL:
-					break;
-				//
+				
 				default:
 					if (!oldFe.isTransformed()) {
 						oldFe.setTransformedTrue();
