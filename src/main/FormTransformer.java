@@ -16,19 +16,23 @@ public class FormTransformer {
 
 	private static Map<String, String> uuidMap = new HashMap<>();
 	private static Set<String> uuidImmutables = new HashSet<>();
+	public static String NG_PREFIX = "ng$";
 
 	public static void main(String[] args) {
 
 		try {
-			String path = "C:/Users/geert.haegens/workspaces/servoy7gh_workspace/formTransformer7test/forms";
-			Form test = FileDAO.readForm(path);
-			Form newForm = test.transform7to8();
-
-			FileDAO.writeForm("d:/", newForm);
-
-			System.err.println(newForm);
+			String path = "C:/Users/geert.haegens/workspaces/servoy8gh29012016ws";
 			
-
+			Set<String> pathAndFilenamesNoExt = FileDAO.scanStructure(path);
+			
+			for (String formPathAndFilenamesNoExt : pathAndFilenamesNoExt) {
+				Form oldForm = FileDAO.readForm(formPathAndFilenamesNoExt);
+				Form newForm = oldForm.transform7to8();
+				FileDAO.writeForm(newForm);
+				
+			}
+			System.out.println("\nForms written :  "+pathAndFilenamesNoExt.size());
+			
 		} catch (FormTransformerException e) {
 			e.printStackTrace();
 		}

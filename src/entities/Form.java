@@ -9,22 +9,26 @@ import org.json.JSONObject;
 
 import enums.ElementTypeID;
 import exceptions.FormTransformerException;
+import main.FormTransformer;
 
 public class Form extends Element {
 
 	private Set<FormElement> items;
 	private String jsFile = null;
+	private final String path;
 
 	// CONSTRUCTORS
 
-	protected Form(String name, int typeid) {
+	protected Form(String name, int typeid, String path) {
 		super(name, typeid);
 		this.items = new LinkedHashSet<>();
+		this.path = path;
 	}
 
-	public Form(String jsonString) {
+	public Form(String jsonString, String path) {
 		super(jsonString);
 		this.items = new LinkedHashSet<>();
+		this.path = path;
 		try {
 			JSONObject jsonObj = new JSONObject(jsonString);
 			JSONArray jsonArr = jsonObj.getJSONArray("items");
@@ -44,7 +48,7 @@ public class Form extends Element {
 	// TOSTRING
 	@Override
 	public String toString() {
-		return super.toString() + "\nForm [items=" + items + "]";
+		return super.toString() + "\nPath = "+path+"\nForm [items=" + items + "]";
 	}
 
 	// GETTERS & SETTERS
@@ -63,13 +67,17 @@ public class Form extends Element {
 
 	// OTHERS
 
+	public String getPath() {
+		return path;
+	}
+
 	public Form transform7to8() throws FormTransformerException {
 
 		if (this.isTransformed()) {
 			return null;
 		}
 
-		Form newForm = new Form("ng$" + this.name, ElementTypeID.FORM);
+		Form newForm = new Form(FormTransformer.NG_PREFIX + this.name, ElementTypeID.FORM, this.path);
 		newForm.otherProperties = this.otherProperties;
 
 		newForm.jsFile = this.jsFile;
@@ -124,6 +132,12 @@ public class Form extends Element {
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_BUTTON_TYPENAME, oldLabelName));
 					break;
+				//
+					/*
+				case ElementTypeID.TAB:
+					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_TAB_TYPENAME, oldLabelName));
+					break;*/
 				//
 				
 				default:
