@@ -73,6 +73,14 @@ public class FormElement extends Element {
 			if (this.typeid == ElementTypeID.INPUT_GENERAL && this.otherProperties.containsKey("displayType")) {
 				negComponentToIdentifyDiffInputs = -1 * Integer.valueOf(this.otherProperties.get("displayType"));
 			}
+			if (this.typeid == ElementTypeID.LABEL && this.otherProperties.containsKey("labelFor")) {
+				return ElementTypeID.LABEL;
+			}
+			if (this.typeid == ElementTypeID.LABEL && this.otherProperties.containsKey("onDoubleClickMethodID")) {
+				// has no "labelFor" & has onDoubleClickMethodID : considered BUTTON
+				return ElementTypeID.BUTTON;
+			}
+			// LABELS without "labelFor" OR "onDoubleClickMethodID" are considered LABELS
 		} catch (NumberFormatException e) {
 		}
 		return negComponentToIdentifyDiffInputs * this.typeid;
@@ -124,6 +132,10 @@ public class FormElement extends Element {
 		case ElementTypeID.MD_INPUT_PASSWORD_TYPENAME:
 			newFe = new FormElement("ng$" + this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_PASSWORD_TYPENAME);
+			break;
+		case ElementTypeID.MD_BUTTON_TYPENAME:
+			newFe = new FormElement("ng$" + this.name, ElementTypeID.MD_INPUT);
+			newFe.otherProperties.put("typeName", ElementTypeID.MD_BUTTON_TYPENAME);
 			break;
 		default:
 			throw new FormTransformerException("Not a valid mdComponentIdentifier ["+mdComponentIdentifier+"] !");

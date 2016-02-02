@@ -21,7 +21,8 @@ public class FileDAO {
 	//private final static String FILE_NAME = "_05labelAndTextArea7";
 	//private final static String FILE_NAME = "_06labelAndTypeAhead7";
 	//private final static String FILE_NAME = "_07labelAndRadio7";
-	private final static String FILE_NAME = "_08labelAndPassword7";
+	//private final static String FILE_NAME = "_08labelAndPassword7";
+	private final static String FILE_NAME = "_10labelAndNoLabelOrButton7";
 	private final static String FORM_EXT = ".frm";
 	private final static String JS_EXT = ".js";
 
