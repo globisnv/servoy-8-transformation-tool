@@ -28,10 +28,10 @@ public class FormTransformer {
 			for (String formPathAndFilenamesNoExt : pathAndFilenamesNoExt) {
 				Form oldForm = FileDAO.readForm(formPathAndFilenamesNoExt);
 				Form newForm = oldForm.transform7to8();
-				FileDAO.writeForm(newForm);
+				//FileDAO.writeForm(newForm);
 				
 			}
-			System.out.println("\nForms written :  "+pathAndFilenamesNoExt.size());
+			System.out.println("Forms written :  "+pathAndFilenamesNoExt.size());
 			
 		} catch (FormTransformerException e) {
 			e.printStackTrace();

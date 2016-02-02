@@ -125,13 +125,18 @@ public class FileDAO {
 		Collection<File> files = FileUtils.listFilesAndDirs(new File(path), TrueFileFilter.INSTANCE,
 				DirectoryFileFilter.DIRECTORY);
 		for (File file : files) {
+			String fileAbsPath = file.getAbsolutePath();
 			if (file.isDirectory() && !file.equals(dir)) {
-				pathsNoExt.addAll(scanStructure(file.getAbsolutePath()));
+				pathsNoExt.addAll(scanStructure(fileAbsPath));
 			}
 			if (!file.isDirectory() && Pattern.matches(".+\\.frm$", file.getName().toLowerCase())) {
-				String ngFilename = file.getAbsolutePath().replace('\\' + file.getName(),
+				String newNgFilename = fileAbsPath.replace('\\' + file.getName(),
 						'\\' + FormTransformer.NG_PREFIX + file.getName());
-				if (!Files.exists(Paths.get(ngFilename))) {
+				String fileNameNoPath = fileAbsPath.substring(fileAbsPath.lastIndexOf('\\')+1);
+				if (fileNameNoPath.startsWith(FormTransformer.NG_PREFIX)) {
+					continue;
+				}
+				if (!Files.exists(Paths.get(newNgFilename))) {
 					int lenghtNoExt = file.getAbsolutePath().lastIndexOf('.');
 					pathsNoExt.add(file.getAbsolutePath().toLowerCase().substring(0, lenghtNoExt));
 				} else {
