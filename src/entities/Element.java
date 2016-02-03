@@ -12,7 +12,6 @@ import org.json.JSONObject;
 
 import enums.ElementDatatype;
 import exceptions.FormTransformerException;
-import main.FormTransformer;
 
 public abstract class Element {
 
@@ -75,8 +74,7 @@ public abstract class Element {
 			Set<String> jsonKeySet = jsonObj.keySet();
 
 			for (String jsonKey : jsonKeySet) {
-				// TODO : deactivate
-				FormTransformer.addProp(jsonKey);
+				
 				// jsonObj = PRIVATE, predefined in
 				// ElementDatatype.newElementKeyValueDatatypes()
 				//
