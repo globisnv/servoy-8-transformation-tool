@@ -24,21 +24,25 @@ public class FormTransformer {
 			String path = "C:/Users/geert.haegens/workspaces/servoy8gh29012016ws";
 			
 			Set<String> pathAndFilenamesNoExt = FileDAO.scanStructure(path);
+			Set<Form> newForms = new HashSet<>();
 			
 			for (String formPathAndFilenamesNoExt : pathAndFilenamesNoExt) {
 				Form oldForm = FileDAO.readForm(formPathAndFilenamesNoExt);
 				Form newForm = oldForm.transform7to8();
-				//FileDAO.writeForm(newForm);
-				
+				uuidMap.put(oldForm.getUUID(), newForm.getUUID());
+				newForms.add(newForm);
 			}
-			System.out.println("Forms written :  "+pathAndFilenamesNoExt.size());
+			for (Form newForm : newForms) {
+				FileDAO.writeForm(newForm);
+			}
+			System.out.println("Forms written :  "+newForms.size());
 			
 		} catch (FormTransformerException e) {
 			e.printStackTrace();
 		}
 
 	}
-
+	
 	// GETTERS & SETTERS
 
 	public static Map<String, String> getUuidMap() {

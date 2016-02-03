@@ -64,6 +64,10 @@ public class Form extends Element {
 	public String getName() {
 		return this.name;
 	}
+	
+	public String getUUID() {
+		return super.uuid;
+	}
 
 	// OTHERS
 
