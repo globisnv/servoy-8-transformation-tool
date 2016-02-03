@@ -31,17 +31,20 @@ public class Form extends Element {
 		this.path = path;
 		try {
 			JSONObject jsonObj = new JSONObject(jsonString);
-			JSONArray jsonArr = jsonObj.getJSONArray("items");
+			if (jsonObj.has("items")) {
+				JSONArray jsonArr = jsonObj.getJSONArray("items");
 
-			// System.out.println(jsonArr);
-			for (int i = 0; i < jsonArr.length(); i++) {
-				JSONObject item = jsonArr.getJSONObject(i);
-				items.add(new FormElement(item.toString()));
+				// System.out.println(jsonArr);
+				for (int i = 0; i < jsonArr.length(); i++) {
+					JSONObject item = jsonArr.getJSONObject(i);
+					items.add(new FormElement(item.toString()));
+				}
 			}
-
+			
 		} catch (JSONException e) {
-			System.out.println("Form/jsonString = " + jsonString);
-			throw new FormTransformerException(e);
+			System.err.println("SKIPPED form = " + this.path + this.name);
+			//System.out.println(jsonString);
+			//throw new FormTransformerException(e);
 		}
 	}
 

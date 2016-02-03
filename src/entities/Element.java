@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 import enums.ElementDatatype;
 import exceptions.FormTransformerException;
+import main.FormTransformer;
 
 public abstract class Element {
 
@@ -48,23 +49,41 @@ public abstract class Element {
 	}
 
 	protected Element(String jsonString) {
+		super();
+		this.otherProperties = new HashMap<>();
 		try {
 			JSONObject jsonObj = new JSONObject(jsonString);
+			jsonObj.getString("uuid");
+			jsonObj.getInt("typeid");
+		} catch (JSONException e) {
+			this.name = "invalidTransformation";
+			this.uuid = UUID.randomUUID().toString();
+			this.typeid = 0;
+			return;
+		}
+		JSONObject jsonObj = new JSONObject(jsonString);
+		if (jsonObj.has("name")) {
+			this.name = jsonObj.getString("name");
+		} else {
+			this.name = "transfName_" + new Date().toString();
+		}
+		this.uuid = jsonObj.getString("uuid");
+		this.typeid = jsonObj.getInt("typeid");
+		
 
-			if (jsonObj.has("name")) {
-				this.name = jsonObj.getString("name");
-			} else {
-				this.name = "transfName_" + new Date().getTime();
-			}
-			this.uuid = jsonObj.getString("uuid");
-			this.typeid = jsonObj.getInt("typeid");
-			this.otherProperties = new HashMap<>();
-
+		try {
 			Set<String> jsonKeySet = jsonObj.keySet();
 
 			for (String jsonKey : jsonKeySet) {
+				// TODO : deactivate
+				FormTransformer.addProp(jsonKey);
 				// jsonObj = PRIVATE, predefined in
 				// ElementDatatype.newElementKeyValueDatatypes()
+				//
+				// jsonObj = NULL
+				if (jsonObj.isNull(jsonKey)) {
+					continue;
+				}
 				if (elementKeyValueDatatypes.containsKey(jsonKey)
 						&& elementKeyValueDatatypes.get(jsonKey) == ElementDatatype.PRIVATE) {
 					continue;
@@ -83,14 +102,18 @@ public abstract class Element {
 					continue;
 				} catch (JSONException e) {
 				}
+				
 				// jsonObj = STRING, if not = ERROR
-				otherProperties.put(jsonKey, String.valueOf(jsonObj.getString(jsonKey)));
+				otherProperties.put(jsonKey, jsonObj.getString(jsonKey));
 				elementKeyValueDatatypes.put(jsonKey, ElementDatatype.STRING);
 
 			}
 
-		} catch (JSONException e) {
-			System.out.println("Element/jsonString = " + jsonString);
+		} catch (JSONException e)
+
+		{
+			System.err.println("ERROR in jsonString");
+			System.out.println(jsonString+"\n");
 			throw new FormTransformerException(e);
 		}
 
@@ -132,7 +155,7 @@ public abstract class Element {
 		if (this.duplicateOfElement != null) {
 			builder.append(", duplicateOfElement=" + this.duplicateOfElement.uuid);
 		}
-		builder.append(", name=" + name+ ", typeid=" + typeid);
+		builder.append(", name=" + name + ", typeid=" + typeid);
 		builder.append(", \notherProperties=" + otherProperties);
 		return builder.toString();
 	}
@@ -178,7 +201,5 @@ public abstract class Element {
 		}
 		return builder.toString();
 	}
-
-	
 
 }

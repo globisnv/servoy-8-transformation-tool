@@ -51,10 +51,11 @@ public class FileDAO {
 			String frmString = readFile(pathFilenameNoExt + FORM_EXT);
 			FormTransformer.scanForImmutableUuids(frmString);
 			form = new Form("{" + frmString + "}", path);
+			/*
 			if (Files.exists(Paths.get(pathFilenameNoExt + JS_EXT))) {
 				form.setJsFile(readFile(pathFilenameNoExt + JS_EXT));
 				FormTransformer.scanForUuids(form.getJsFile());
-			}
+			}*/
 		} catch (FormTransformerException e) {
 			throw new FormTransformerException(e);
 		}
@@ -121,10 +122,16 @@ public class FileDAO {
 
 	public static Set<String> scanStructure(String path) {
 		File dir = new File(path);
+		if (dir.getName().startsWith(".", 0)) {
+				return null;
+			}
 		Set<String> pathsNoExt = new HashSet<>();
 		Collection<File> files = FileUtils.listFilesAndDirs(new File(path), TrueFileFilter.INSTANCE,
 				DirectoryFileFilter.DIRECTORY);
 		for (File file : files) {
+			if (file.getAbsolutePath().contains("\\.")) {
+				continue;
+			}
 			String fileAbsPath = file.getAbsolutePath();
 			if (file.isDirectory() && !file.equals(dir)) {
 				pathsNoExt.addAll(scanStructure(fileAbsPath));
@@ -145,7 +152,7 @@ public class FileDAO {
 				}
 			}
 		}
-
+System.out.println("Scanned : "+dir+" = "+pathsNoExt.size());
 		return pathsNoExt;
 	}
 
