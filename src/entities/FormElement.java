@@ -42,36 +42,36 @@ public class FormElement extends Element {
 
 		if (this.jsonItems.size() > 0) {
 
-			builder.append("," + CRLF + "json: {" + CRLF);
+			builder.append("," + FormTransformer.CRLF + "json: {" + FormTransformer.CRLF);
 			int builderLengthNoJsonItems = builder.length();
 			
 			if (this.jsonTabs.size() > 0) {
-				builder.append("tabs: [" + CRLF);
+				builder.append("tabs: [" + FormTransformer.CRLF);
 				for (Map<String, String> jsonTab : this.jsonTabs) {
 					builder.append("{");
 					for (Entry<String, String> jsonTabItem : jsonTab.entrySet()) {
 						builder.append(jsonTabItem.getKey()).append(": ")
-						.append(QM + jsonTabItem.getValue() + QM).append(", ");
+						.append(FormTransformer.QM + jsonTabItem.getValue() + FormTransformer.QM).append(", ");
 					}
-					builder.append("active: true"+CRLF);
-					builder.append("},"+CRLF);
+					builder.append("active: true"+FormTransformer.CRLF);
+					builder.append("},"+FormTransformer.CRLF);
 				}
 				builder.setLength(builder.length() - 3);
-				builder.append(CRLF + "]," + CRLF);
-				builder.append(CRLF + "visible: true," + CRLF);
+				builder.append(FormTransformer.CRLF + "]," + FormTransformer.CRLF);
+				builder.append(FormTransformer.CRLF + "visible: true," + FormTransformer.CRLF);
 			}
 
 			for (Entry<String, String> jsonItem : this.jsonItems.entrySet()) {
 				String itemValue = jsonItem.getValue();
 				if (Element.getElementKeyValueDatatype(jsonItem.getKey()) == ElementDatatype.STRING) {
-					itemValue = QM + itemValue + QM;
+					itemValue = FormTransformer.QM + itemValue + FormTransformer.QM;
 				}
-				builder.append(jsonItem.getKey()).append(": ").append(itemValue).append(",").append(CRLF);
+				builder.append(jsonItem.getKey()).append(": ").append(itemValue).append(",").append(FormTransformer.CRLF);
 			}
 			if (builder.lastIndexOf(",") > builderLengthNoJsonItems) {
 				builder.setLength(builder.length() - 3);
 			}
-			builder.append("}" + CRLF);
+			builder.append("}" + FormTransformer.CRLF);
 		}
 		return builder.toString();
 	}

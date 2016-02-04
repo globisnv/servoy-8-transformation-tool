@@ -2,6 +2,8 @@ package enums;
 
 public class ElementTypeID {
 
+	public final static int INVALID_TRANSFORMATION = 0;
+	
 	// SERVOY 7
 	public final static int FORM = 3;
 	public final static int INPUT_GENERAL = 4;

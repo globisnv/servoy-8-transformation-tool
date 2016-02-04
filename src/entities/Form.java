@@ -6,7 +6,6 @@ import main.FormTransformer;
 
 public class Form extends Element {
 
-	//private Set<FormElement> items;
 	private String jsFile = null;
 	private final String path;
 
@@ -14,7 +13,6 @@ public class Form extends Element {
 
 	protected Form(String name, int typeid, String path) {
 		super(name, typeid);
-		//this.items = new LinkedHashSet<>();
 		this.path = path;
 	}
 
@@ -46,6 +44,10 @@ public class Form extends Element {
 	
 	public String getUUID() {
 		return super.uuid;
+	}
+	
+	public int getTypeId() {
+		return super.typeid;
 	}
 
 	// OTHERS

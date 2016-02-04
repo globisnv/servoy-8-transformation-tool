@@ -13,12 +13,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import enums.ElementDatatype;
+import enums.ElementTypeID;
 import exceptions.FormTransformerException;
+import main.FormTransformer;
 
 public abstract class Element {
-
-	public final String CRLF = System.getProperty("line.separator");
-	public final char QM = '"'; // quotation mark
 
 	protected final String uuid;
 	protected Element duplicateOfElement = null;
@@ -59,7 +58,8 @@ public abstract class Element {
 		} catch (JSONException e) {
 			this.name = "invalidTransformation";
 			this.uuid = UUID.randomUUID().toString();
-			this.typeid = 0;
+			this.typeid = ElementTypeID.INVALID_TRANSFORMATION;
+			this.transformed = true;
 			return;
 		}
 		JSONObject jsonObj = new JSONObject(jsonString);
@@ -70,7 +70,7 @@ public abstract class Element {
 		}
 		this.uuid = jsonObj.getString("uuid");
 		this.typeid = jsonObj.getInt("typeid");
-		
+
 		// jsonObj = jsonArray (key = items)
 		try {
 			JSONArray jsonItems = jsonObj.getJSONArray("items");
@@ -85,7 +85,7 @@ public abstract class Element {
 			Set<String> jsonKeySet = jsonObj.keySet();
 
 			for (String jsonKey : jsonKeySet) {
-				
+
 				// jsonObj = PRIVATE, predefined in
 				// ElementDatatype.newElementKeyValueDatatypes()
 				//
@@ -111,7 +111,7 @@ public abstract class Element {
 					continue;
 				} catch (JSONException e) {
 				}
-				
+
 				// jsonObj = STRING, if not = ERROR
 				otherProperties.put(jsonKey, jsonObj.getString(jsonKey));
 				elementKeyValueDatatypes.put(jsonKey, ElementDatatype.STRING);
@@ -122,7 +122,7 @@ public abstract class Element {
 
 		{
 			System.err.println("ERROR in jsonString");
-			System.out.println(jsonString+"\n");
+			System.out.println(jsonString + "\n");
 			throw new FormTransformerException(e);
 		}
 
@@ -169,11 +169,11 @@ public abstract class Element {
 		if (this.items.size() > 0) {
 			builder.append("\nitems\n*****");
 			for (FormElement item : items) {
-				builder.append("\n"+item);
+				builder.append("\n" + item);
 			}
 			builder.append("\nend item *****");
 		}
-		
+
 		return builder.toString();
 	}
 
@@ -201,39 +201,41 @@ public abstract class Element {
 
 	protected String toServoyForm() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("uuid: ").append(QM).append(this.uuid).append(QM).append(",").append(CRLF);
-		builder.append("typeid: ").append(this.typeid).append(",").append(CRLF);
-		builder.append("name: ").append(QM).append(this.name).append(QM).append(",").append(CRLF);
+		builder.append("uuid: ").append(FormTransformer.QM).append(this.uuid).append(FormTransformer.QM).append(",")
+				.append(FormTransformer.CRLF);
+		builder.append("typeid: ").append(this.typeid).append(",").append(FormTransformer.CRLF);
+		builder.append("name: ").append(FormTransformer.QM).append(this.name).append(FormTransformer.QM).append(",")
+				.append(FormTransformer.CRLF);
 		int builderLengthNoOtherProps = builder.length();
 
 		for (Entry<String, String> otherProp : this.otherProperties.entrySet()) {
 			String propValue = otherProp.getValue();
 			if (Element.getElementKeyValueDatatype(otherProp.getKey()) == ElementDatatype.STRING) {
-				propValue = QM + propValue + QM;
+				propValue = FormTransformer.QM + propValue + FormTransformer.QM;
 			}
-			builder.append(otherProp.getKey()).append(": ").append(propValue).append(",").append(CRLF);
+			builder.append(otherProp.getKey()).append(": ").append(propValue).append(",").append(FormTransformer.CRLF);
 		}
 		if (builder.lastIndexOf(",") > builderLengthNoOtherProps) {
 			builder.setLength(builder.length() - 3);
 		}
 		if (this.items.size() > 0) {
-			builder.append("," + CRLF);
-			builder.append("items: [" + CRLF);
+			builder.append("," + FormTransformer.CRLF);
+			builder.append("items: [" + FormTransformer.CRLF);
 			int builderLengthNoItems = builder.length();
 
 			for (FormElement item : this.items) {
 
 				if (!item.isTransformed()) {
-					builder.append("{" + CRLF);
+					builder.append("{" + FormTransformer.CRLF);
 					builder.append(item.toServoyForm());
-					builder.append(CRLF + "}").append("," + CRLF);
+					builder.append(FormTransformer.CRLF + "}").append("," + FormTransformer.CRLF);
 				}
 
 			}
 			if (builder.lastIndexOf(",") > builderLengthNoItems) {
 				builder.setLength(builder.length() - 3);
 			}
-			builder.append(CRLF + "]" + CRLF);
+			builder.append(FormTransformer.CRLF + "]" + FormTransformer.CRLF);
 		}
 		return builder.toString();
 	}

@@ -2,6 +2,7 @@ package main;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -10,16 +11,22 @@ import java.util.regex.Pattern;
 
 import daos.FileDAO;
 import entities.Form;
+import enums.ElementTypeID;
 import exceptions.FormTransformerException;
 
 // TODO : mdRadio.spec + .html => valuelist = valuelistID
-//TODO : mdRadio.spec  =>containsFormId = containsFormID
+// TODO : mdRadio.spec  =>containsFormId = containsFormID
 
 public class FormTransformer {
 
 	private static Map<String, String> uuidMap = new HashMap<>();
 	private static Set<String> uuidImmutables = new HashSet<>();
-	public static String NG_PREFIX = "ng$";
+	
+	public static final String NG_PREFIX = "ng$";
+	public static final String FORM_EXT = ".frm";
+	public static final String JS_EXT = ".js";
+	public static final String CRLF = System.getProperty("line.separator");
+	public static final char QM = '"'; // quotation mark
 	public static final String SEARCH_ICON_IMAGEMEDIA_ID = "07a009d2-0a86-49d1-b28c-bff40b764c40";
 	
 	public static void main(String[] args) {
@@ -32,23 +39,35 @@ public class FormTransformer {
 			Set<String> pathAndFilenamesNoExt = FileDAO.scanStructure(path);
 			System.out.println("Forms to scan :  "+pathAndFilenamesNoExt.size());
 			Set<Form> newForms = new HashSet<>();
+			// true = nothing to do ; false = ERROR
+			Map<String, Boolean> logForms = new LinkedHashMap<>();
 			
 			for (String formPathAndFilenamesNoExt : pathAndFilenamesNoExt) {
 				Form oldForm = FileDAO.readForm(formPathAndFilenamesNoExt);
 				
 				Form newForm = oldForm.transform7to8();
-				if (oldForm.isTransformed()) {
+				if (oldForm.isTransformed() && newForm != null) {
 					uuidMap.put(oldForm.getUUID(), newForm.getUUID());
 					newForms.add(newForm);
 				}
+				// add log
+				if (oldForm.getTypeId() == ElementTypeID.INVALID_TRANSFORMATION) {
+					logForms.put(formPathAndFilenamesNoExt+FormTransformer.FORM_EXT, false);
+				}
+				if (!oldForm.isTransformed()) {
+					logForms.put(formPathAndFilenamesNoExt+FormTransformer.FORM_EXT, true);
+				}
 				
 			}
-			
+			// WRITE log
+			FileDAO.writeLog(path, logForms);
+			/*
+			// WRITE all ng$ forms
 			for (Form newForm : newForms) {
 				FileDAO.writeForm(newForm);
 			}
 			System.out.println("Forms written :  "+newForms.size());
-			
+			*/
 			
 			System.err.println("Done.");
 			
