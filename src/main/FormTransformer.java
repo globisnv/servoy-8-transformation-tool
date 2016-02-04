@@ -20,6 +20,7 @@ public class FormTransformer {
 	private static Map<String, String> uuidMap = new HashMap<>();
 	private static Set<String> uuidImmutables = new HashSet<>();
 	public static String NG_PREFIX = "ng$";
+	public static final String SEARCH_ICON_IMAGEMEDIA_ID = "07a009d2-0a86-49d1-b28c-bff40b764c40";
 	
 	public static void main(String[] args) {
 

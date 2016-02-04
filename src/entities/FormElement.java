@@ -100,7 +100,11 @@ public class FormElement extends Element {
 				// has no "labelFor" & has onDoubleClickMethodID : considered BUTTON
 				return ElementTypeID.BUTTON;
 			}
-			// LABELS without "labelFor" OR "onDoubleClickMethodID" are considered LABELS
+			if (this.typeid == ElementTypeID.LABEL && this.otherProperties.containsValue(FormTransformer.SEARCH_ICON_IMAGEMEDIA_ID)) {
+				// has no "labelFor" & has the UNIQUE uuid for the search icon
+				return ElementTypeID.BTN_SELECT;
+			}
+			// LABELS non of the above, are considered LABELS
 		} catch (NumberFormatException e) {
 		}
 		return negComponentToIdentifyDiffInputs * this.typeid;
@@ -156,6 +160,10 @@ public class FormElement extends Element {
 		case ElementTypeID.MD_BUTTON_TYPENAME:
 			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_BUTTON_TYPENAME);
+			break;
+		case ElementTypeID.MD_LOOKUPFIELD_TYPENAME:
+			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
+			newFe.otherProperties.put("typeName", ElementTypeID.MD_LOOKUPFIELD_TYPENAME);
 			break;
 		case ElementTypeID.MD_TABPANEL_TYPENAME:
 			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);

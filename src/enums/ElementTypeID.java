@@ -19,6 +19,7 @@ public class ElementTypeID {
 	public final static int INPUT_PASSWORD = -24;
 	public final static int INPUT_TYPEAHEAD = -40;
 	public final static int BUTTON = 0;
+	public final static int BTN_SELECT = 999;
 
 	// SERVOY 8
 	public final static int MD_INPUT = 47;
@@ -32,5 +33,6 @@ public class ElementTypeID {
 	public final static String MD_INPUT_PASSWORD_TYPENAME = "svy-md-Password";
 	public final static String MD_BUTTON_TYPENAME = "svy-md-button";
 	public final static String MD_TABPANEL_TYPENAME = "svy-md-Tabpanel";
+	public final static String MD_LOOKUPFIELD_TYPENAME = "svy-md-Lookupfield";
 	
 }

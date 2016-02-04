@@ -116,6 +116,11 @@ public class Form extends Element {
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_BUTTON_TYPENAME, oldLabelName));
 					break;
 				//
+				case ElementTypeID.BTN_SELECT:
+					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_LOOKUPFIELD_TYPENAME, oldLabelName));
+					break;
+				//
 				case ElementTypeID.TAB_PANEL:
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_TABPANEL_TYPENAME, FormTransformer.NG_PREFIX+oldFe.name));
 					break;
