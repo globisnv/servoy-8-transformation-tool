@@ -62,8 +62,10 @@ public class Form extends Element {
 
 		Form newForm = new Form(FormTransformer.NG_PREFIX + this.name, ElementTypeID.FORM, this.path);
 		newForm.otherProperties = this.otherProperties;
-
 		newForm.jsFile = this.jsFile;
+		
+		int modifications = 0;
+		
 		try {
 			for (FormElement oldFe : this.items) {
 
@@ -74,67 +76,84 @@ public class Form extends Element {
 					// TODO : ifLabelExists method algemeen ?
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME, oldLabelName));
+					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_CHECKBOX:
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME, oldLabelName));
+					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_COMBOBOX:
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_COMBOBOX_TYPENAME, oldLabelName));
+					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_CALENDAR:
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_DATEPICKER_TYPENAME, oldLabelName));
+					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_TEXTAREA:
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TEXTAREA_TYPENAME, oldLabelName));
+					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_TYPEAHEAD:
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TYPEAHEAD_TYPENAME, oldLabelName));
+					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_RADIO:
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_RADIO_TYPENAME, oldLabelName));
+					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_PASSWORD:
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_PASSWORD_TYPENAME, oldLabelName));
+					modifications++;
 					break;
 				//
 				case ElementTypeID.BUTTON:
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_BUTTON_TYPENAME, oldLabelName));
+					modifications++;
 					break;
 				//
 				case ElementTypeID.BTN_SELECT:
 					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_LOOKUPFIELD_TYPENAME, oldLabelName));
+					modifications++;
 					break;
 				//
 				case ElementTypeID.TAB_PANEL:
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_TABPANEL_TYPENAME, FormTransformer.NG_PREFIX+oldFe.name));
+					modifications++;
 					break;
 				//
 				
 				default:
 					if (!oldFe.isTransformed()) {
 						oldFe.setTransformedTrue();
+						// no modifications ; form element is added to new form as is;
 						newForm.items.add(FormElement.deepCopySyncedTransform(oldFe, false));
 					}
 					break;
 				}
 
 			}
+			// transform did nothing :
+			if (modifications == 0) {
+				return this;
+			}
+			// else :
 			this.setTransformedTrue();
 			return newForm;
 		} catch (FormTransformerException e) {

@@ -37,8 +37,11 @@ public class FormTransformer {
 				Form oldForm = FileDAO.readForm(formPathAndFilenamesNoExt);
 				
 				Form newForm = oldForm.transform7to8();
-				uuidMap.put(oldForm.getUUID(), newForm.getUUID());
-				newForms.add(newForm);
+				if (oldForm.isTransformed()) {
+					uuidMap.put(oldForm.getUUID(), newForm.getUUID());
+					newForms.add(newForm);
+				}
+				
 			}
 			
 			for (Form newForm : newForms) {
