@@ -12,6 +12,8 @@ import daos.FileDAO;
 import entities.Form;
 import exceptions.FormTransformerException;
 
+// TODO : mdRadio.spec + .html => valuelist = valuelistID
+
 public class FormTransformer {
 
 	private static Map<String, String> uuidMap = new HashMap<>();
@@ -21,7 +23,7 @@ public class FormTransformer {
 	public static void main(String[] args) {
 
 		try {
-			String path = "C:/Users/geert.haegens/workspaces/servoy8gh29012016ws";
+			String path = "C:/Users/geert.haegens/workspaces/servoy8gh29012016ws/S1235/forms";
 			//String path = "C:/Users/geert.haegens/workspaces/servoy_workspace8new";
 			
 			

@@ -6,7 +6,8 @@ public class ElementTypeID {
 	public final static int FORM = 3;
 	public final static int INPUT_GENERAL = 4;
 	public final static int LABEL = 7;
-	//public final static int TAB = 16;
+	public final static int TAB_PANEL = 16;
+	public final static int TAB = 15;
 	
 	// FormElement.formElementIdentifier() returns typeid * -displayType if typeid = 4
 	public final static int INPUT_TEXTFIELD = 4;
@@ -30,6 +31,6 @@ public class ElementTypeID {
 	public final static String MD_INPUT_RADIO_TYPENAME = "svy-md-Radio";
 	public final static String MD_INPUT_PASSWORD_TYPENAME = "svy-md-Password";
 	public final static String MD_BUTTON_TYPENAME = "svy-md-button";
-	//public final static String MD_TAB_TYPENAME = "svy-md-tabpanel";
+	public final static String MD_TABPANEL_TYPENAME = "svy-md-Tabpanel";
 	
 }

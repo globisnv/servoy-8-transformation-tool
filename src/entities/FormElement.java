@@ -138,11 +138,11 @@ public class FormElement extends Element {
 			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_BUTTON_TYPENAME);
 			break;
-			/*
-		case ElementTypeID.MD_TAB_TYPENAME:
+		case ElementTypeID.MD_TABPANEL_TYPENAME:
+			System.out.println("*** TAB =\n"+this);
 			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
-			newFe.otherProperties.put("typeName", ElementTypeID.MD_TAB_TYPENAME);
-			break;*/
+			newFe.otherProperties.put("typeName", ElementTypeID.MD_TABPANEL_TYPENAME);
+			break;
 		default:
 			throw new FormTransformerException("Not a valid mdComponentIdentifier ["+mdComponentIdentifier+"] !");
 		}

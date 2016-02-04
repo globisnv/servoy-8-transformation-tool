@@ -2,11 +2,13 @@ package entities;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +24,7 @@ public abstract class Element {
 	protected Element duplicateOfElement = null;
 	protected final String name;
 	protected final int typeid;
+	protected Set<FormElement> items;
 	protected Map<String, String> otherProperties;
 	protected static Map<String, ElementDatatype> elementKeyValueDatatypes = ElementDatatype
 			.newElementKeyValueDatatypes();
@@ -37,6 +40,7 @@ public abstract class Element {
 		this.typeid = element.typeid;
 		this.transformed = transformedValue;
 		this.otherProperties = element.otherProperties;
+		this.items = element.items;
 	}
 
 	protected Element(String name, int typeid) {
@@ -45,11 +49,13 @@ public abstract class Element {
 		this.name = name;
 		this.typeid = typeid;
 		this.otherProperties = new HashMap<>();
+		this.items = new HashSet<>();
 	}
 
 	protected Element(String jsonString) {
 		super();
 		this.otherProperties = new HashMap<>();
+		this.items = new HashSet<>();
 		try {
 			JSONObject jsonObj = new JSONObject(jsonString);
 			jsonObj.getString("uuid");
@@ -64,11 +70,20 @@ public abstract class Element {
 		if (jsonObj.has("name")) {
 			this.name = jsonObj.getString("name");
 		} else {
-			this.name = "transfName_" + new Date().toString();
+			this.name = "transfName_" + String.valueOf(new Date().getTime());
 		}
 		this.uuid = jsonObj.getString("uuid");
 		this.typeid = jsonObj.getInt("typeid");
 		
+		// jsonObj = jsonArray (key = items)
+		try {
+			JSONArray jsonItems = jsonObj.getJSONArray("items");
+			for (int i = 0; i < jsonItems.length(); i++) {
+				JSONObject item = jsonItems.getJSONObject(i);
+				items.add(new FormElement(item.toString()));
+			}
+		} catch (JSONException e) {
+		}
 
 		try {
 			Set<String> jsonKeySet = jsonObj.keySet();
@@ -196,6 +211,25 @@ public abstract class Element {
 		}
 		if (builder.lastIndexOf(",") > builderLengthNoOtherProps) {
 			builder.setLength(builder.length() - 3);
+		}
+		if (this.items.size() > 0) {
+			builder.append("," + CRLF);
+			builder.append("items: [" + CRLF);
+			int builderLengthNoItems = builder.length();
+
+			for (FormElement item : this.items) {
+
+				if (!item.isTransformed()) {
+					builder.append("{" + CRLF);
+					builder.append(item.toServoyForm());
+					builder.append(CRLF + "}").append("," + CRLF);
+				}
+
+			}
+			if (builder.lastIndexOf(",") > builderLengthNoItems) {
+				builder.setLength(builder.length() - 3);
+			}
+			builder.append(CRLF + "]" + CRLF);
 		}
 		return builder.toString();
 	}

@@ -51,11 +51,11 @@ public class FileDAO {
 			String frmString = readFile(pathFilenameNoExt + FORM_EXT);
 			FormTransformer.scanForImmutableUuids(frmString);
 			form = new Form("{" + frmString + "}", path);
-			/*
+			
 			if (Files.exists(Paths.get(pathFilenameNoExt + JS_EXT))) {
 				form.setJsFile(readFile(pathFilenameNoExt + JS_EXT));
 				FormTransformer.scanForUuids(form.getJsFile());
-			}*/
+			}
 		} catch (FormTransformerException e) {
 			throw new FormTransformerException(e);
 		}

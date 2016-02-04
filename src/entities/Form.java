@@ -1,19 +1,12 @@
 package entities;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import enums.ElementTypeID;
 import exceptions.FormTransformerException;
 import main.FormTransformer;
 
 public class Form extends Element {
 
-	private Set<FormElement> items;
+	//private Set<FormElement> items;
 	private String jsFile = null;
 	private final String path;
 
@@ -21,14 +14,16 @@ public class Form extends Element {
 
 	protected Form(String name, int typeid, String path) {
 		super(name, typeid);
-		this.items = new LinkedHashSet<>();
+		//this.items = new LinkedHashSet<>();
 		this.path = path;
 	}
 
 	public Form(String jsonString, String path) {
 		super(jsonString);
-		this.items = new LinkedHashSet<>();
 		this.path = path;
+		/*
+		this.items = new LinkedHashSet<>();
+		
 		try {
 			JSONObject jsonObj = new JSONObject(jsonString);
 			if (jsonObj.has("items")) {
@@ -45,7 +40,7 @@ public class Form extends Element {
 			System.err.println("SKIPPED form = " + this.path + this.name);
 			//System.out.println(jsonString);
 			//throw new FormTransformerException(e);
-		}
+		} */
 	}
 
 	// TOSTRING
@@ -140,11 +135,9 @@ public class Form extends Element {
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_BUTTON_TYPENAME, oldLabelName));
 					break;
 				//
-					/*
-				case ElementTypeID.TAB:
-					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
-					newForm.items.add(oldFe.transform(ElementTypeID.MD_TAB_TYPENAME, oldLabelName));
-					break;*/
+				case ElementTypeID.TAB_PANEL:
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_TABPANEL_TYPENAME, FormTransformer.NG_PREFIX+oldFe.name));
+					break;
 				//
 				
 				default:
@@ -180,7 +173,8 @@ public class Form extends Element {
 
 	@Override
 	public String toServoyForm() {
-
+		return super.toServoyForm();
+		/*
 		StringBuilder builder = new StringBuilder(super.toServoyForm());
 		builder.append("," + CRLF);
 		builder.append("items: [" + CRLF);
@@ -199,7 +193,7 @@ public class Form extends Element {
 			builder.setLength(builder.length() - 3);
 		}
 		builder.append(CRLF + "]" + CRLF);
-		return builder.toString();
+		return builder.toString();*/
 	}
 
 }
