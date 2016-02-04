@@ -21,26 +21,7 @@ public class Form extends Element {
 	public Form(String jsonString, String path) {
 		super(jsonString);
 		this.path = path;
-		/*
-		this.items = new LinkedHashSet<>();
 		
-		try {
-			JSONObject jsonObj = new JSONObject(jsonString);
-			if (jsonObj.has("items")) {
-				JSONArray jsonArr = jsonObj.getJSONArray("items");
-
-				// System.out.println(jsonArr);
-				for (int i = 0; i < jsonArr.length(); i++) {
-					JSONObject item = jsonArr.getJSONObject(i);
-					items.add(new FormElement(item.toString()));
-				}
-			}
-			
-		} catch (JSONException e) {
-			System.err.println("SKIPPED form = " + this.path + this.name);
-			//System.out.println(jsonString);
-			//throw new FormTransformerException(e);
-		} */
 	}
 
 	// TOSTRING
@@ -174,26 +155,7 @@ public class Form extends Element {
 	@Override
 	public String toServoyForm() {
 		return super.toServoyForm();
-		/*
-		StringBuilder builder = new StringBuilder(super.toServoyForm());
-		builder.append("," + CRLF);
-		builder.append("items: [" + CRLF);
-		int builderLengthNoItems = builder.length();
-
-		for (FormElement item : this.items) {
-
-			if (!item.isTransformed()) {
-				builder.append("{" + CRLF);
-				builder.append(item.toServoyForm());
-				builder.append(CRLF + "}").append("," + CRLF);
-			}
-
-		}
-		if (builder.lastIndexOf(",") > builderLengthNoItems) {
-			builder.setLength(builder.length() - 3);
-		}
-		builder.append(CRLF + "]" + CRLF);
-		return builder.toString();*/
+		
 	}
 
 }
