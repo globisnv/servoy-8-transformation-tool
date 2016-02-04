@@ -1,8 +1,10 @@
 package entities;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import enums.ElementDatatype;
 import enums.ElementTypeID;
@@ -12,6 +14,7 @@ import main.FormTransformer;
 public class FormElement extends Element {
 
 	protected Map<String, String> jsonItems = new HashMap<>();
+	protected Set<Map<String, String>> jsonTabs = new HashSet<>();
 
 	// CONSTRUCTORS
 
@@ -41,6 +44,22 @@ public class FormElement extends Element {
 
 			builder.append("," + CRLF + "json: {" + CRLF);
 			int builderLengthNoJsonItems = builder.length();
+			
+			if (this.jsonTabs.size() > 0) {
+				builder.append("tabs: [" + CRLF);
+				for (Map<String, String> jsonTab : this.jsonTabs) {
+					builder.append("{");
+					for (Entry<String, String> jsonTabItem : jsonTab.entrySet()) {
+						builder.append(jsonTabItem.getKey()).append(": ")
+						.append(QM + jsonTabItem.getValue() + QM).append(", ");
+					}
+					builder.append("active: true"+CRLF);
+					builder.append("},"+CRLF);
+				}
+				builder.setLength(builder.length() - 3);
+				builder.append(CRLF + "]," + CRLF);
+				builder.append(CRLF + "visible: true," + CRLF);
+			}
 
 			for (Entry<String, String> jsonItem : this.jsonItems.entrySet()) {
 				String itemValue = jsonItem.getValue();
@@ -139,9 +158,17 @@ public class FormElement extends Element {
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_BUTTON_TYPENAME);
 			break;
 		case ElementTypeID.MD_TABPANEL_TYPENAME:
-			System.out.println("*** TAB =\n"+this);
 			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_TABPANEL_TYPENAME);
+			for (FormElement thisItem : this.items) {
+				Map<String, String> jsonTab = new HashMap<>();
+				FormElement.moveFromOtherProperties(thisItem.otherProperties, jsonTab, "containsFormID");
+				FormElement.moveFromOtherProperties(thisItem.otherProperties, jsonTab, "relationName");
+				FormElement.moveFromOtherProperties(thisItem.otherProperties, jsonTab, "text");
+				jsonTab.put("name", thisItem.name);
+				newFe.jsonTabs.add(jsonTab);
+			}
+			
 			break;
 		default:
 			throw new FormTransformerException("Not a valid mdComponentIdentifier ["+mdComponentIdentifier+"] !");
@@ -152,6 +179,7 @@ public class FormElement extends Element {
 		FormElement.moveFromOtherProperties(this.otherProperties, newFe.otherProperties, "size");
 		FormElement.moveFromOtherProperties(this.otherProperties, newFe.otherProperties, "anchor");
 		// jsonItems create label + copy remaining other props
+		// TODO : label enkel als nodig => input, password, ...
 		newFe.jsonItems.put("label", oldLabelName);
 		newFe.jsonItems.putAll(this.otherProperties);
 		

@@ -1,5 +1,6 @@
 package entities;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,8 +25,8 @@ public abstract class Element {
 	protected Element duplicateOfElement = null;
 	protected final String name;
 	protected final int typeid;
-	protected Set<FormElement> items;
-	protected Map<String, String> otherProperties;
+	protected Set<FormElement> items = new HashSet<>();
+	protected Map<String, String> otherProperties = new HashMap<>();
 	protected static Map<String, ElementDatatype> elementKeyValueDatatypes = ElementDatatype
 			.newElementKeyValueDatatypes();
 	private boolean transformed = false;
@@ -48,14 +49,10 @@ public abstract class Element {
 		this.uuid = UUID.randomUUID().toString();
 		this.name = name;
 		this.typeid = typeid;
-		this.otherProperties = new HashMap<>();
-		this.items = new HashSet<>();
 	}
 
 	protected Element(String jsonString) {
 		super();
-		this.otherProperties = new HashMap<>();
-		this.items = new HashSet<>();
 		try {
 			JSONObject jsonObj = new JSONObject(jsonString);
 			jsonObj.getString("uuid");
@@ -170,6 +167,14 @@ public abstract class Element {
 		}
 		builder.append(", name=" + name + ", typeid=" + typeid);
 		builder.append(", \notherProperties=" + otherProperties);
+		if (this.items.size() > 0) {
+			builder.append("\nitems\n*****");
+			for (FormElement item : items) {
+				builder.append("\n"+item);
+			}
+			builder.append("\nend item *****");
+		}
+		
 		return builder.toString();
 	}
 
