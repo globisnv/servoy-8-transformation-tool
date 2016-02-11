@@ -16,6 +16,7 @@ import exceptions.FormTransformerException;
 
 // TODO : mdRadio.spec + .html => valuelist = valuelistID
 // TODO : mdRadio.spec  =>containsFormId = containsFormID
+// TODO : tabPanel.spec  =>containsFormId = containsFormID
 
 public class FormTransformer {
 
@@ -32,9 +33,9 @@ public class FormTransformer {
 	public static void main(String[] args) {
 
 		try {
-			String path = "C:/Users/geert.haegens/workspaces/servoy8gh29012016ws/S1235/forms";
+			//String path = "C:/Users/geert.haegens/workspaces/servoy8gh29012016ws/S1235/forms";
 			//String path = "C:/Users/geert.haegens/workspaces/servoy_workspace8new";
-			
+			String path = "C:/Users/geert.haegens/workspaces/servoy8new05022016/ghaTest/forms";
 			
 			Set<String> pathAndFilenamesNoExt = FileDAO.scanStructure(path);
 			System.out.println("Forms to scan :  "+pathAndFilenamesNoExt.size());
@@ -61,13 +62,13 @@ public class FormTransformer {
 			}
 			// WRITE log
 			FileDAO.writeLog(path, logForms);
-			/*
+			
 			// WRITE all ng$ forms
 			for (Form newForm : newForms) {
 				FileDAO.writeForm(newForm);
 			}
 			System.out.println("Forms written :  "+newForms.size());
-			*/
+			
 			
 			System.err.println("Done.");
 			

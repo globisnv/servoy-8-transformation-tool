@@ -185,7 +185,7 @@ public class FormElement extends Element {
 		// other props - if present
 		FormElement.moveFromOtherProperties(this.otherProperties, newFe.otherProperties, "location");
 		FormElement.moveFromOtherProperties(this.otherProperties, newFe.otherProperties, "size");
-		FormElement.moveFromOtherProperties(this.otherProperties, newFe.otherProperties, "anchor");
+		FormElement.moveFromOtherProperties(this.otherProperties, newFe.otherProperties, "anchors");
 		// jsonItems create label + copy remaining other props
 		// TODO : label enkel als nodig => input, password, ...
 		newFe.jsonItems.put("label", oldLabelName);
