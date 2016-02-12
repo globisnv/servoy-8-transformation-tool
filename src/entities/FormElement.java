@@ -126,47 +126,47 @@ public class FormElement extends Element {
 
 		switch (mdComponentIdentifier) {
 		case ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME:
-			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
+			newFe = new FormElement(this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME);
 			break;
 		case ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME:
-			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
+			newFe = new FormElement(this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME);
 			break;
 		case ElementTypeID.MD_INPUT_COMBOBOX_TYPENAME:
-			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
+			newFe = new FormElement(this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_COMBOBOX_TYPENAME);
 			break;
 		case ElementTypeID.MD_INPUT_DATEPICKER_TYPENAME:
-			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
+			newFe = new FormElement(this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_DATEPICKER_TYPENAME);
 			break;
 		case ElementTypeID.MD_INPUT_TEXTAREA_TYPENAME:
-			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
+			newFe = new FormElement(this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_TEXTAREA_TYPENAME);
 			break;
 		case ElementTypeID.MD_INPUT_TYPEAHEAD_TYPENAME:
-			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
+			newFe = new FormElement(this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_TYPEAHEAD_TYPENAME);
 			break;
 		case ElementTypeID.MD_INPUT_RADIO_TYPENAME:
-			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
+			newFe = new FormElement(this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_RADIO_TYPENAME);
 			break;
 		case ElementTypeID.MD_INPUT_PASSWORD_TYPENAME:
-			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
+			newFe = new FormElement(this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_INPUT_PASSWORD_TYPENAME);
 			break;
 		case ElementTypeID.MD_BUTTON_TYPENAME:
-			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
+			newFe = new FormElement(this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_BUTTON_TYPENAME);
 			break;
 		case ElementTypeID.MD_LOOKUPFIELD_TYPENAME:
-			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
+			newFe = new FormElement(this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_LOOKUPFIELD_TYPENAME);
 			break;
 		case ElementTypeID.MD_TABPANEL_TYPENAME:
-			newFe = new FormElement(FormTransformer.NG_PREFIX + this.name, ElementTypeID.MD_INPUT);
+			newFe = new FormElement(this.name, ElementTypeID.MD_INPUT);
 			newFe.otherProperties.put("typeName", ElementTypeID.MD_TABPANEL_TYPENAME);
 			for (FormElement thisItem : this.items) {
 				Map<String, String> jsonTab = new HashMap<>();
