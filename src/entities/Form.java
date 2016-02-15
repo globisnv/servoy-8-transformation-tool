@@ -71,67 +71,67 @@ public class Form extends Element {
 		try {
 			for (FormElement oldFe : this.items) {
 
-				String oldLabelName = "";
+				String oldLabelText = "";
 				switch (oldFe.formElementIdentifier()) {
 				//
 				case ElementTypeID.INPUT_TEXTFIELD:
 					// TODO : ifLabelExists method algemeen ?
-					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
-					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME, oldLabelName));
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_CHECKBOX:
-					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
-					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME, oldLabelName));
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_COMBOBOX:
-					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
-					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_COMBOBOX_TYPENAME, oldLabelName));
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_COMBOBOX_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_CALENDAR:
-					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
-					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_DATEPICKER_TYPENAME, oldLabelName));
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_DATEPICKER_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_TEXTAREA:
-					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
-					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TEXTAREA_TYPENAME, oldLabelName));
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TEXTAREA_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_TYPEAHEAD:
-					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
-					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TYPEAHEAD_TYPENAME, oldLabelName));
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TYPEAHEAD_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_RADIO:
-					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
-					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_RADIO_TYPENAME, oldLabelName));
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_RADIO_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_PASSWORD:
-					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
-					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_PASSWORD_TYPENAME, oldLabelName));
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_PASSWORD_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.BUTTON:
-					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
-					newForm.items.add(oldFe.transform(ElementTypeID.MD_BUTTON_TYPENAME, oldLabelName));
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_BUTTON_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.BTN_SELECT:
-					oldLabelName = ifLabelExistsSetTransformedTrue(oldFe.name);
-					newForm.items.add(oldFe.transform(ElementTypeID.MD_LOOKUPFIELD_TYPENAME, oldLabelName));
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_LOOKUPFIELD_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
@@ -171,7 +171,7 @@ public class Form extends Element {
 				if (item.otherProperties.containsKey("labelFor")
 						&& item.otherProperties.get("labelFor").equals(formElementName)) {
 					item.setTransformedTrue();
-					return item.name;
+					return item.otherProperties.get("text");
 				}
 			}
 		}

@@ -36,7 +36,8 @@ public class FormTransformer {
 			//String path = "C:/Users/geert.haegens/workspaces/servoy8gh29012016ws/S1235/forms";
 			//String path = "C:/Users/geert.haegens/workspaces/servoy_workspace8new";
 			//String path = "C:/Users/geert.haegens/workspaces/servoy8new05022016/ghaTest/forms";
-			String path = "C:/Users/geert.haegens/workspaces/servoy8new05022016/globis_login/forms";
+			String path = "C:/Users/geert.haegens/workspaces/servoy8new12022016/globis_attributes/forms";
+			
 			
 			Set<String> pathAndFilenamesNoExt = FileDAO.scanStructure(path);
 			System.out.println("Forms to scan :  "+pathAndFilenamesNoExt.size());
