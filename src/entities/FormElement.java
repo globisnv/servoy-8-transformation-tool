@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import enums.ElementDatatype;
 import enums.ElementTypeID;
 import exceptions.FormTransformerException;
@@ -23,7 +26,7 @@ public class FormElement extends Element {
 
 	}
 
-	private FormElement(String name, int typeid) {
+	protected FormElement(String name, int typeid) {
 		super(name, typeid);
 	}
 
@@ -43,7 +46,6 @@ public class FormElement extends Element {
 		if (this.jsonItems.size() > 0) {
 
 			builder.append("," + FormTransformer.CRLF + "json: {" + FormTransformer.CRLF);
-			int builderLengthNoJsonItems = builder.length();
 			
 			if (this.jsonTabs.size() > 0) {
 				builder.append("tabs: [" + FormTransformer.CRLF);
@@ -68,7 +70,7 @@ public class FormElement extends Element {
 				}
 				builder.append(jsonItem.getKey()).append(": ").append(itemValue).append(",").append(FormTransformer.CRLF);
 			}
-			if (builder.lastIndexOf(",") > builderLengthNoJsonItems) {
+			if (this.jsonItems.size() > 0) {
 				builder.setLength(builder.length() - 3);
 			}
 			builder.append("}" + FormTransformer.CRLF);
@@ -119,7 +121,7 @@ public class FormElement extends Element {
 		return newFe;
 	}
 
-	protected FormElement transform(String mdComponentIdentifier, String oldLabelName)
+	protected FormElement transform(String mdComponentIdentifier, String oldLabelText)
 			throws FormTransformerException {
 
 		FormElement newFe;
@@ -176,7 +178,27 @@ public class FormElement extends Element {
 				jsonTab.put("name", thisItem.name);
 				newFe.jsonTabs.add(jsonTab);
 			}
+			break;
+		case ElementTypeID.UI_GRIDVIEW_TEMP_TYPENAME:
+			newFe = new FormElement(this.name, ElementTypeID.UI_GRIDVIEW_TEMP);
 			
+			/*
+			//  width & titel
+			JSONArray arrDisplayFoundsetHeaders = new JSONArray();
+			if (this.otherProperties.containsKey("size")) {
+				XYinteger size = new XYinteger(this.otherProperties.get("size"));
+				JSONObject jsSize = new JSONObject();
+				jsSize.append("columnWidth", String.valueOf(size.getX()));
+				arrDisplayFoundsetHeaders.put(jsSize);
+			}
+			
+			JSONObject displayFoundsetHeaders = new JSONObject();
+			displayFoundsetHeaders.append("dpXfromFS","dp0");
+			displayFoundsetHeaders.append(arrDisplayFoundsetHeaders);
+			
+			newFe.jsonItems.put("displayFoundsetHeaders", "dfh");
+			newFe.jsonItems.put("dpXfromFS","dp0");
+			newFe.jsonItems.put("ngFoundset","dataproviders");*/
 			break;
 		default:
 			throw new FormTransformerException("Not a valid mdComponentIdentifier ["+mdComponentIdentifier+"] !");
@@ -188,7 +210,7 @@ public class FormElement extends Element {
 		FormElement.moveFromOtherProperties(this.otherProperties, newFe.otherProperties, "anchors");
 		// jsonItems create label + copy remaining other props
 		// TODO : label enkel als nodig => input, password, ...
-		newFe.jsonItems.put("label", oldLabelName);
+		newFe.jsonItems.put("label", oldLabelText);
 		newFe.jsonItems.putAll(this.otherProperties);
 		
 		this.setTransformedTrue();

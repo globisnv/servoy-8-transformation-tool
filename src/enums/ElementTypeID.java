@@ -10,6 +10,7 @@ public class ElementTypeID {
 	public final static int LABEL = 7;
 	public final static int TAB_PANEL = 16;
 	public final static int TAB = 15;
+	public final static int BODY = 19;
 	
 	// FormElement.formElementIdentifier() returns typeid * -displayType if typeid = 4
 	public final static int INPUT_TEXTFIELD = 4;
@@ -25,6 +26,7 @@ public class ElementTypeID {
 
 	// SERVOY 8
 	public final static int MD_INPUT = 47;
+	public final static int UI_GRIDVIEW_TEMP = -47;
 	public final static String MD_INPUT_TEXTFIELD_TYPENAME = "svy-md-Input";
 	public final static String MD_INPUT_TEXTAREA_TYPENAME = "svy-md-textarea";
 	public final static String MD_INPUT_CHECKBOX_TYPENAME = "svy-md-Checkbox";
@@ -36,5 +38,8 @@ public class ElementTypeID {
 	public final static String MD_BUTTON_TYPENAME = "svy-md-button";
 	public final static String MD_TABPANEL_TYPENAME = "svy-md-Tabpanel";
 	public final static String MD_LOOKUPFIELD_TYPENAME = "svy-md-Lookupfield";
+	public final static String UI_GRIDVIEW_TYPENAME = "svy-Ui-Gridview";
+	public final static String UI_GRIDVIEW_TEMP_TYPENAME = "gridview-temp";
+	
 	
 }

@@ -1,6 +1,13 @@
 package entities;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import enums.ElementTypeID;
+import enums.FormView;
 import exceptions.FormTransformerException;
 import main.FormTransformer;
 
@@ -19,13 +26,13 @@ public class Form extends Element {
 	public Form(String jsonString, String path) {
 		super(jsonString);
 		this.path = path;
-		
+
 	}
 
 	// TOSTRING
 	@Override
 	public String toString() {
-		return super.toString() + "\nPath = "+path+"\nForm [items=" + items + "]";
+		return super.toString() + "\nPath = " + path + "\nForm [items=" + items + "]";
 	}
 
 	// GETTERS & SETTERS
@@ -41,13 +48,21 @@ public class Form extends Element {
 	public String getName() {
 		return this.name;
 	}
-	
+
 	public String getUUID() {
 		return super.uuid;
 	}
-	
+
 	public int getTypeId() {
 		return super.typeid;
+	}
+
+	public int getView() {
+		if (otherProperties.containsKey("view")) {
+			return Integer.valueOf(otherProperties.get("view"));
+		} else {
+			return -1;
+		}
 	}
 
 	// OTHERS
@@ -56,7 +71,28 @@ public class Form extends Element {
 		return path;
 	}
 
-	public Form transform7to8() throws FormTransformerException {
+	public static FormElement findParentFormElement(String uuid, Set<Form> forms) {
+		for (Form form : forms) {
+			for (FormElement item : form.items) {
+				if (item.typeid == ElementTypeID.TAB_PANEL) {
+					String key = "containsFormID";
+					Set<FormElement> itemItems = item.items;
+					for (FormElement itemItem : itemItems) {
+						if ((itemItem.otherProperties.containsKey(key))
+								&& (itemItem.otherProperties.get(key).equals(uuid))) {
+							// item = tabPanel
+							return item;
+						}
+
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	public Form transform7dtl() throws FormTransformerException {
 
 		if (this.isTransformed()) {
 			return null;
@@ -65,9 +101,9 @@ public class Form extends Element {
 		Form newForm = new Form(FormTransformer.NG_PREFIX + this.name, ElementTypeID.FORM, this.path);
 		newForm.otherProperties = this.otherProperties;
 		newForm.jsFile = this.jsFile;
-		
+
 		int modifications = 0;
-		
+
 		try {
 			for (FormElement oldFe : this.items) {
 
@@ -136,15 +172,17 @@ public class Form extends Element {
 					break;
 				//
 				case ElementTypeID.TAB_PANEL:
-					newForm.items.add(oldFe.transform(ElementTypeID.MD_TABPANEL_TYPENAME, FormTransformer.NG_PREFIX+oldFe.name));
+					newForm.items.add(oldFe.transform(ElementTypeID.MD_TABPANEL_TYPENAME,
+							FormTransformer.NG_PREFIX + oldFe.name));
 					modifications++;
 					break;
 				//
-				
+
 				default:
 					if (!oldFe.isTransformed()) {
 						oldFe.setTransformedTrue();
-						// no modifications ; form element is added to new form as is;
+						// no modifications ; form element is added to new form
+						// as is;
 						newForm.items.add(FormElement.deepCopySyncedTransform(oldFe, false));
 					}
 					break;
@@ -157,6 +195,153 @@ public class Form extends Element {
 			}
 			// else :
 			this.setTransformedTrue();
+			return newForm;
+		} catch (FormTransformerException e) {
+			throw new FormTransformerException(e);
+		}
+	}
+
+	public Form transform7lst(FormElement parentFe) throws FormTransformerException {
+
+		if (this.isTransformed()) {
+			return null;
+		}
+
+		Form newForm = new Form(FormTransformer.NG_PREFIX + this.name, ElementTypeID.FORM, this.path);
+		newForm.otherProperties = this.otherProperties;
+		newForm.otherProperties.put("view", String.valueOf(FormView.RECORD_VIEW));
+		newForm.jsFile = this.jsFile;
+
+		int modifications = 0;
+
+		try {
+			for (FormElement oldFe : this.items) {
+
+				String oldLabelText = "";
+				switch (oldFe.formElementIdentifier()) {
+				//
+				case ElementTypeID.BODY:
+					try {
+						int bodyHeight = Integer.valueOf(oldFe.otherProperties.get("height"));
+						XYinteger newFormSize = new XYinteger(newForm.otherProperties.get("size"));
+						XYinteger parentSize = new XYinteger(parentFe.otherProperties.get("size"));
+						// if parentFe.height > newForm.size.height
+						if (parentSize.getY() > newFormSize.getY()) {
+							newFormSize.setY(parentSize.getY());
+							newForm.otherProperties.put("size", newFormSize.toString());
+						}
+						// if parentFe.height > newForm.body
+						if (parentSize.getY() > bodyHeight) {
+							oldFe.otherProperties.put("height", String.valueOf(parentSize.getY()));
+						}
+					} catch (NumberFormatException ex) {/* do nothing */
+					} catch (FormTransformerException ex) {
+						/* do nothing */}
+
+					if (!oldFe.isTransformed()) {
+						modifications++;
+						oldFe.setTransformedTrue();
+						// no modifications ; form element is added to new form
+						// as is;
+						newForm.items.add(FormElement.deepCopySyncedTransform(oldFe, false));
+					}
+
+					break;
+				//
+				case ElementTypeID.INPUT_TEXTFIELD:
+				case ElementTypeID.INPUT_CHECKBOX:
+				case ElementTypeID.INPUT_COMBOBOX:
+				case ElementTypeID.BTN_SELECT:
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					newForm.items.add(oldFe.transform(ElementTypeID.UI_GRIDVIEW_TEMP_TYPENAME, oldLabelText));
+					modifications++;
+					break;
+				case ElementTypeID.LABEL:
+				case ElementTypeID.INPUT_CALENDAR:
+				case ElementTypeID.INPUT_TEXTAREA:
+				case ElementTypeID.INPUT_TYPEAHEAD:
+				case ElementTypeID.INPUT_RADIO:
+				case ElementTypeID.INPUT_PASSWORD:
+				case ElementTypeID.BUTTON:
+				case ElementTypeID.TAB_PANEL:
+				default:
+					// other form elements are excluded
+					oldFe.setTransformedTrue();
+					break;
+				}
+
+			}
+			// transform did nothing :
+			if (modifications == 0) {
+				return this;
+			}
+			// else :
+			this.setTransformedTrue();
+			
+			// CREATE ONE GRIDVIEW OUT OF ALL TEMP GRIDVIEWS
+			FormElement gridviewFe = new FormElement("gridview", ElementTypeID.MD_INPUT);
+			Set<Map<String, String>> displayFoundsetHeaders = new LinkedHashSet<>();
+			Map<String, String> fsDataproviders = new LinkedHashMap<>();
+			String ngFoundset = "";
+			
+			int i = 0;
+			for (FormElement item : newForm.items) {
+				if (!item.isTransformed() && item.typeid == ElementTypeID.UI_GRIDVIEW_TEMP) {
+					Map<String, String> displayFoundsetHeader = new LinkedHashMap<>();
+					displayFoundsetHeader.put("dpXfromFS", "dp"+i);
+					displayFoundsetHeader.put("headerTitle", item.name);
+					displayFoundsetHeaders.add(displayFoundsetHeader);
+					fsDataproviders.put("dp"+i, item.name);
+					i++;
+					item.setTransformedTrue();
+				}
+			}
+			
+			// ngFoundset
+			StringBuilder builder = new StringBuilder();
+			builder.append("{").append(FormTransformer.CRLF)
+					.append("foundsetSelector: ")
+					.append(FormTransformer.QM).append(ngFoundset).append(FormTransformer.QM)
+					.append(",").append(FormTransformer.CRLF)
+					.append("dataproviders: ").append(FormTransformer.CRLF)
+					.append("{").append(FormTransformer.CRLF);
+			for (Entry<String, String> entry : fsDataproviders.entrySet()) {
+				builder.append(entry.getKey()).append(": ")
+					.append(FormTransformer.QM).append(entry.getValue()).append(FormTransformer.QM)
+					.append(",")
+					.append(FormTransformer.CRLF);
+			}
+			if (fsDataproviders.size() > 0) {
+				builder.setLength(builder.length()-3);
+			}
+			builder.append(FormTransformer.CRLF).append("}").append(FormTransformer.CRLF)
+				.append(FormTransformer.CRLF).append("}").append(FormTransformer.CRLF);
+			gridviewFe.jsonItems.put("ngFoundset",builder.toString());
+			
+			// displayFoundsetHeaders
+			builder = new StringBuilder();
+			builder.append("[").append(FormTransformer.CRLF);
+				
+			for (Map<String, String> displayFoundsetHeader : displayFoundsetHeaders) {
+				builder.append("{").append(FormTransformer.CRLF);
+				for (Entry<String, String> entry : displayFoundsetHeader.entrySet()) {
+					builder.append(entry.getKey()).append(": ")
+						.append(FormTransformer.QM).append(entry.getValue()).append(FormTransformer.QM)
+						.append(",").append(FormTransformer.CRLF);
+				}
+				if (displayFoundsetHeader.size() > 0) {
+					builder.setLength(builder.length()-3);
+				}
+				builder.append(FormTransformer.CRLF).append("},").append(FormTransformer.CRLF);
+			}
+			if (displayFoundsetHeaders.size() > 0) {
+				builder.setLength(builder.length()-3);
+			}
+			builder.append(FormTransformer.CRLF).append("]").append(FormTransformer.CRLF);
+			gridviewFe.jsonItems.put("displayFoundsetHeaders", builder.toString());
+			
+			newForm.items.add(gridviewFe);
+			
 			return newForm;
 		} catch (FormTransformerException e) {
 			throw new FormTransformerException(e);
@@ -181,7 +366,7 @@ public class Form extends Element {
 	@Override
 	public String toServoyForm() {
 		return super.toServoyForm();
-		
+
 	}
 
 }

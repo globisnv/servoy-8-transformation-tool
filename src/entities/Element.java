@@ -204,24 +204,24 @@ public abstract class Element {
 		builder.append("uuid: ").append(FormTransformer.QM).append(this.uuid).append(FormTransformer.QM).append(",")
 				.append(FormTransformer.CRLF);
 		builder.append("typeid: ").append(this.typeid).append(",").append(FormTransformer.CRLF);
-		builder.append("name: ").append(FormTransformer.QM).append(this.name).append(FormTransformer.QM).append(",")
-				.append(FormTransformer.CRLF);
-		int builderLengthNoOtherProps = builder.length();
+		builder.append("name: ").append(FormTransformer.QM).append(this.name).append(FormTransformer.QM);
 
-		for (Entry<String, String> otherProp : this.otherProperties.entrySet()) {
-			String propValue = otherProp.getValue();
-			if (Element.getElementKeyValueDatatype(otherProp.getKey()) == ElementDatatype.STRING) {
-				propValue = FormTransformer.QM + propValue + FormTransformer.QM;
+		if (this.otherProperties.size() > 0) {
+			builder.append(",").append(FormTransformer.CRLF);
+
+			for (Entry<String, String> otherProp : this.otherProperties.entrySet()) {
+				String propValue = otherProp.getValue();
+				if (Element.getElementKeyValueDatatype(otherProp.getKey()) == ElementDatatype.STRING) {
+					propValue = FormTransformer.QM + propValue + FormTransformer.QM;
+				}
+				builder.append(otherProp.getKey()).append(": ").append(propValue).append(",")
+						.append(FormTransformer.CRLF);
 			}
-			builder.append(otherProp.getKey()).append(": ").append(propValue).append(",").append(FormTransformer.CRLF);
-		}
-		if (builder.lastIndexOf(",") > builderLengthNoOtherProps) {
 			builder.setLength(builder.length() - 3);
 		}
 		if (this.items.size() > 0) {
 			builder.append("," + FormTransformer.CRLF);
 			builder.append("items: [" + FormTransformer.CRLF);
-			int builderLengthNoItems = builder.length();
 
 			for (FormElement item : this.items) {
 
@@ -232,9 +232,7 @@ public abstract class Element {
 				}
 
 			}
-			if (builder.lastIndexOf(",") > builderLengthNoItems) {
-				builder.setLength(builder.length() - 3);
-			}
+			builder.setLength(builder.length() - 3);
 			builder.append(FormTransformer.CRLF + "]" + FormTransformer.CRLF);
 		}
 		return builder.toString();

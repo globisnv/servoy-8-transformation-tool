@@ -13,6 +13,8 @@ public enum ElementDatatype {
 		elementKeyValueDatatypes.put("typeid", ElementDatatype.PRIVATE);
 		elementKeyValueDatatypes.put("items", ElementDatatype.PRIVATE);
 		elementKeyValueDatatypes.put("json", ElementDatatype.PRIVATE);
+		elementKeyValueDatatypes.put("ngFoundset", ElementDatatype.PRIVATE);
+		elementKeyValueDatatypes.put("displayFoundsetHeaders", ElementDatatype.PRIVATE);
 	
 		return elementKeyValueDatatypes;
 	}
