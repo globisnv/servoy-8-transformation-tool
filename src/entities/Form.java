@@ -215,6 +215,18 @@ public class Form extends Element {
 
 		int modifications = 0;
 
+		XYinteger newFormSize = new XYinteger(newForm.otherProperties.get("size"));
+		XYinteger parentSize = new XYinteger(parentFe.otherProperties.get("size"));
+		// parentSize > newFormSize ?
+		if (parentSize.getX() > newFormSize.getX()) {
+			newFormSize.setX(parentSize.getX());
+			modifications++;
+		}
+		if (parentSize.getY() > newFormSize.getY()) {
+			newFormSize.setY(parentSize.getY());
+			modifications++;
+		}
+		
 		try {
 			for (FormElement oldFe : this.items) {
 
@@ -224,16 +236,10 @@ public class Form extends Element {
 				case ElementTypeID.BODY:
 					try {
 						int bodyHeight = Integer.valueOf(oldFe.otherProperties.get("height"));
-						XYinteger newFormSize = new XYinteger(newForm.otherProperties.get("size"));
-						XYinteger parentSize = new XYinteger(parentFe.otherProperties.get("size"));
-						// if parentFe.height > newForm.size.height
-						if (parentSize.getY() > newFormSize.getY()) {
-							newFormSize.setY(parentSize.getY());
-							newForm.otherProperties.put("size", newFormSize.toString());
-						}
-						// if parentFe.height > newForm.body
-						if (parentSize.getY() > bodyHeight) {
-							oldFe.otherProperties.put("height", String.valueOf(parentSize.getY()));
+						// bodyHeight < newFormHeight ?
+						if (bodyHeight < newFormSize.getY()) {
+							oldFe.otherProperties.put("height", String.valueOf(newFormSize.getY()));
+							modifications++;
 						}
 					} catch (NumberFormatException ex) {/* do nothing */
 					} catch (FormTransformerException ex) {
@@ -251,17 +257,32 @@ public class Form extends Element {
 				//
 
 				case ElementTypeID.INPUT_CHECKBOX:
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					oldFe.otherProperties.put("cellTemplate", "uiGridview-checkbox.html");
+					newForm.items.add(oldFe.transform(ElementTypeID.UI_GRIDVIEW_TEMP_TYPENAME, oldLabelText));
+					modifications++;
+					break;
 				case ElementTypeID.INPUT_COMBOBOX:
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					oldFe.otherProperties.put("cellTemplate", "uiGridview-combobox.html");
+					newForm.items.add(oldFe.transform(ElementTypeID.UI_GRIDVIEW_TEMP_TYPENAME, oldLabelText));
+					modifications++;
+					break;
+				case ElementTypeID.INPUT_CALENDAR:
+					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					oldFe.otherProperties.put("cellTemplate", "uiGridview-calendar.html");
+					newForm.items.add(oldFe.transform(ElementTypeID.UI_GRIDVIEW_TEMP_TYPENAME, oldLabelText));
+					modifications++;
+					break;
 				case ElementTypeID.BTN_SELECT:
+				case ElementTypeID.INPUT_TEXTAREA:
+				case ElementTypeID.INPUT_TYPEAHEAD:
 				case ElementTypeID.INPUT_TEXTFIELD:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.UI_GRIDVIEW_TEMP_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				case ElementTypeID.LABEL:
-				case ElementTypeID.INPUT_CALENDAR:
-				case ElementTypeID.INPUT_TEXTAREA:
-				case ElementTypeID.INPUT_TYPEAHEAD:
 				case ElementTypeID.INPUT_RADIO:
 				case ElementTypeID.INPUT_PASSWORD:
 				case ElementTypeID.BUTTON:
@@ -284,6 +305,8 @@ public class Form extends Element {
 			FormElement gridviewFe = new FormElement("gridview", ElementTypeID.MD_INPUT);
 			gridviewFe.otherProperties.put("typeName", ElementTypeID.UI_GRIDVIEW_TYPENAME);
 			gridviewFe.otherProperties.put("location", "0, 0");
+			gridviewFe.otherProperties.put("anchors", "11");
+			gridviewFe.otherProperties.put("size", newFormSize.toString());
 			Set<Map<String, String>> displayFoundsetHeaders = new LinkedHashSet<>();
 			Map<String, String> fsDataproviders = new LinkedHashMap<>();
 			String ngFoundset = "";
@@ -322,6 +345,10 @@ public class Form extends Element {
 					// valuelistID
 					if (item.jsonItems.containsKey("valuelistID")) {
 						displayFoundsetHeader.put("valuelistID", item.jsonItems.get("valuelistID"));
+					}
+					// cellTemplate
+					if (item.jsonItems.containsKey("cellTemplate")) {
+						displayFoundsetHeader.put("cellTemplate", item.jsonItems.get("cellTemplate"));
 					}
 					displayFoundsetHeader.put("dpXfromFS", "dp" + i);
 					displayFoundsetHeaders.add(displayFoundsetHeader);

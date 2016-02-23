@@ -19,6 +19,7 @@ public enum ElementDatatype {
 		elementKeyValueDatatypes.put("headerTitle", ElementDatatype.STRING);
 		elementKeyValueDatatypes.put("dpXfromFS", ElementDatatype.STRING);
 		elementKeyValueDatatypes.put("cellTemplate", ElementDatatype.STRING);
+		elementKeyValueDatatypes.put("anchors", ElementDatatype.INTEGER);
 		return elementKeyValueDatatypes;
 	}
 }
