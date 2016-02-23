@@ -182,23 +182,6 @@ public class FormElement extends Element {
 		case ElementTypeID.UI_GRIDVIEW_TEMP_TYPENAME:
 			newFe = new FormElement(this.name, ElementTypeID.UI_GRIDVIEW_TEMP);
 			
-			/*
-			//  width & titel
-			JSONArray arrDisplayFoundsetHeaders = new JSONArray();
-			if (this.otherProperties.containsKey("size")) {
-				XYinteger size = new XYinteger(this.otherProperties.get("size"));
-				JSONObject jsSize = new JSONObject();
-				jsSize.append("columnWidth", String.valueOf(size.getX()));
-				arrDisplayFoundsetHeaders.put(jsSize);
-			}
-			
-			JSONObject displayFoundsetHeaders = new JSONObject();
-			displayFoundsetHeaders.append("dpXfromFS","dp0");
-			displayFoundsetHeaders.append(arrDisplayFoundsetHeaders);
-			
-			newFe.jsonItems.put("displayFoundsetHeaders", "dfh");
-			newFe.jsonItems.put("dpXfromFS","dp0");
-			newFe.jsonItems.put("ngFoundset","dataproviders");*/
 			break;
 		default:
 			throw new FormTransformerException("Not a valid mdComponentIdentifier ["+mdComponentIdentifier+"] !");

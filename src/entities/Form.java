@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import enums.ElementDatatype;
 import enums.ElementTypeID;
 import enums.FormView;
 import exceptions.FormTransformerException;
@@ -248,10 +249,11 @@ public class Form extends Element {
 
 					break;
 				//
-				case ElementTypeID.INPUT_TEXTFIELD:
+
 				case ElementTypeID.INPUT_CHECKBOX:
 				case ElementTypeID.INPUT_COMBOBOX:
 				case ElementTypeID.BTN_SELECT:
+				case ElementTypeID.INPUT_TEXTFIELD:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
 					newForm.items.add(oldFe.transform(ElementTypeID.UI_GRIDVIEW_TEMP_TYPENAME, oldLabelText));
 					modifications++;
@@ -277,71 +279,105 @@ public class Form extends Element {
 			}
 			// else :
 			this.setTransformedTrue();
-			
+
 			// CREATE ONE GRIDVIEW OUT OF ALL TEMP GRIDVIEWS
 			FormElement gridviewFe = new FormElement("gridview", ElementTypeID.MD_INPUT);
+			gridviewFe.otherProperties.put("typeName", ElementTypeID.UI_GRIDVIEW_TYPENAME);
+			gridviewFe.otherProperties.put("location", "0, 0");
 			Set<Map<String, String>> displayFoundsetHeaders = new LinkedHashSet<>();
 			Map<String, String> fsDataproviders = new LinkedHashMap<>();
 			String ngFoundset = "";
-			
+
 			int i = 0;
 			for (FormElement item : newForm.items) {
 				if (!item.isTransformed() && item.typeid == ElementTypeID.UI_GRIDVIEW_TEMP) {
 					Map<String, String> displayFoundsetHeader = new LinkedHashMap<>();
-					displayFoundsetHeader.put("dpXfromFS", "dp"+i);
-					displayFoundsetHeader.put("headerTitle", item.name);
+					// headerTitle
+					if (item.jsonItems.containsKey("label")) {
+						displayFoundsetHeader.put("headerTitle", item.jsonItems.get("label"));
+					} else {
+						displayFoundsetHeader.put("headerTitle", item.name);
+					}
+					// columnWidth
+					if (item.otherProperties.containsKey("size")) {
+						XYinteger size = new XYinteger(item.otherProperties.get("size"));
+						displayFoundsetHeader.put("columnWidth", String.valueOf(size.getX()));
+					}
+					// dataProviderID
+					if (item.jsonItems.containsKey("dataProviderID")) {
+						displayFoundsetHeader.put("dataProviderID", item.jsonItems.get("dataProviderID"));
+					}
+					// toolTipText
+					if (item.jsonItems.containsKey("toolTipText")) {
+						displayFoundsetHeader.put("toolTipText", item.jsonItems.get("toolTipText"));
+					}
+					// format
+					if (item.jsonItems.containsKey("format")) {
+						displayFoundsetHeader.put("format", item.jsonItems.get("format"));
+					}
+					// horizontalAlignment
+					if (item.jsonItems.containsKey("horizontalAlignment")) {
+						displayFoundsetHeader.put("horizontalAlignment", item.jsonItems.get("horizontalAlignment"));
+					}
+					// valuelistID
+					if (item.jsonItems.containsKey("valuelistID")) {
+						displayFoundsetHeader.put("valuelistID", item.jsonItems.get("valuelistID"));
+					}
+					displayFoundsetHeader.put("dpXfromFS", "dp" + i);
 					displayFoundsetHeaders.add(displayFoundsetHeader);
-					fsDataproviders.put("dp"+i, item.name);
+					fsDataproviders.put("dp" + i, item.name);
 					i++;
 					item.setTransformedTrue();
+					// System.out.println("\nitem : \n"+item);
+					// System.out.println("jsonItem : \n"+item.jsonItems);
 				}
 			}
-			
+
 			// ngFoundset
 			StringBuilder builder = new StringBuilder();
-			builder.append("{").append(FormTransformer.CRLF)
-					.append("foundsetSelector: ")
-					.append(FormTransformer.QM).append(ngFoundset).append(FormTransformer.QM)
-					.append(",").append(FormTransformer.CRLF)
-					.append("dataproviders: ").append(FormTransformer.CRLF)
-					.append("{").append(FormTransformer.CRLF);
+			builder.append("{").append(FormTransformer.CRLF).append("foundsetSelector: ").append(FormTransformer.QM)
+					.append(ngFoundset).append(FormTransformer.QM).append(",").append(FormTransformer.CRLF)
+					.append("dataproviders: ").append(FormTransformer.CRLF).append("{").append(FormTransformer.CRLF);
 			for (Entry<String, String> entry : fsDataproviders.entrySet()) {
-				builder.append(entry.getKey()).append(": ")
-					.append(FormTransformer.QM).append(entry.getValue()).append(FormTransformer.QM)
-					.append(",")
-					.append(FormTransformer.CRLF);
+				builder.append(entry.getKey()).append(": ").append(FormTransformer.QM).append(entry.getValue())
+						.append(FormTransformer.QM).append(",").append(FormTransformer.CRLF);
 			}
 			if (fsDataproviders.size() > 0) {
-				builder.setLength(builder.length()-3);
+				builder.setLength(builder.length() - 3);
 			}
-			builder.append(FormTransformer.CRLF).append("}").append(FormTransformer.CRLF)
-				.append(FormTransformer.CRLF).append("}").append(FormTransformer.CRLF);
-			gridviewFe.jsonItems.put("ngFoundset",builder.toString());
-			
+			builder.append(FormTransformer.CRLF).append("}").append(FormTransformer.CRLF).append(FormTransformer.CRLF)
+					.append("}").append(FormTransformer.CRLF);
+			gridviewFe.jsonItems.put("ngFoundset", builder.toString());
+
 			// displayFoundsetHeaders
 			builder = new StringBuilder();
 			builder.append("[").append(FormTransformer.CRLF);
-				
+
 			for (Map<String, String> displayFoundsetHeader : displayFoundsetHeaders) {
 				builder.append("{").append(FormTransformer.CRLF);
 				for (Entry<String, String> entry : displayFoundsetHeader.entrySet()) {
-					builder.append(entry.getKey()).append(": ")
-						.append(FormTransformer.QM).append(entry.getValue()).append(FormTransformer.QM)
-						.append(",").append(FormTransformer.CRLF);
+					builder.append(entry.getKey()).append(": ");
+					if (Element.elementKeyValueDatatypes.get(entry.getKey()) == ElementDatatype.STRING) {
+						builder.append(FormTransformer.QM).append(entry.getValue()).append(FormTransformer.QM);
+
+					} else {
+						builder.append(entry.getValue());
+					}
+					builder.append(",").append(FormTransformer.CRLF);
 				}
 				if (displayFoundsetHeader.size() > 0) {
-					builder.setLength(builder.length()-3);
+					builder.setLength(builder.length() - 3);
 				}
 				builder.append(FormTransformer.CRLF).append("},").append(FormTransformer.CRLF);
 			}
 			if (displayFoundsetHeaders.size() > 0) {
-				builder.setLength(builder.length()-3);
+				builder.setLength(builder.length() - 3);
 			}
 			builder.append(FormTransformer.CRLF).append("]").append(FormTransformer.CRLF);
 			gridviewFe.jsonItems.put("displayFoundsetHeaders", builder.toString());
-			
+
 			newForm.items.add(gridviewFe);
-			
+
 			return newForm;
 		} catch (FormTransformerException e) {
 			throw new FormTransformerException(e);

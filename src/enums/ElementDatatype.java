@@ -5,7 +5,7 @@ import java.util.Map;
 
 public enum ElementDatatype {
 	PRIVATE, STRING, INTEGER, BOOLEAN;
-	
+
 	public static Map<String, ElementDatatype> newElementKeyValueDatatypes() {
 		Map<String, ElementDatatype> elementKeyValueDatatypes = new HashMap<>();
 		elementKeyValueDatatypes.put("uuid", ElementDatatype.PRIVATE);
@@ -15,8 +15,10 @@ public enum ElementDatatype {
 		elementKeyValueDatatypes.put("json", ElementDatatype.PRIVATE);
 		elementKeyValueDatatypes.put("ngFoundset", ElementDatatype.PRIVATE);
 		elementKeyValueDatatypes.put("displayFoundsetHeaders", ElementDatatype.PRIVATE);
-	
+
+		elementKeyValueDatatypes.put("headerTitle", ElementDatatype.STRING);
+		elementKeyValueDatatypes.put("dpXfromFS", ElementDatatype.STRING);
+		elementKeyValueDatatypes.put("cellTemplate", ElementDatatype.STRING);
 		return elementKeyValueDatatypes;
 	}
 }
-
