@@ -6,9 +6,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import enums.ElementDatatype;
 import enums.ElementTypeID;
 import exceptions.FormTransformerException;
@@ -198,6 +195,16 @@ public class FormElement extends Element {
 		
 		this.setTransformedTrue();
 		return newFe;
+	}
+	
+	protected void setSizeHeightIfSmaller(int height) {
+		if (this.otherProperties.containsKey("size")) {
+			XYinteger size = new XYinteger(this.otherProperties.get("size"));
+			if (size.getY() < height) {
+				size.setY(height);
+				this.otherProperties.put("size", size.toString());
+			}
+		}
 	}
 
 }

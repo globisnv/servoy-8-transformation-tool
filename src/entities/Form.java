@@ -114,24 +114,28 @@ public class Form extends Element {
 				case ElementTypeID.INPUT_TEXTFIELD:
 					// TODO : ifLabelExists method algemeen ?
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_CHECKBOX:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_COMBOBOX:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_COMBOBOX_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_CALENDAR:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_DATEPICKER_TYPENAME, oldLabelText));
 					modifications++;
 					break;
@@ -144,6 +148,7 @@ public class Form extends Element {
 				//
 				case ElementTypeID.INPUT_TYPEAHEAD:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TYPEAHEAD_TYPENAME, oldLabelText));
 					modifications++;
 					break;
@@ -156,6 +161,7 @@ public class Form extends Element {
 				//
 				case ElementTypeID.INPUT_PASSWORD:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_PASSWORD_TYPENAME, oldLabelText));
 					modifications++;
 					break;
@@ -168,6 +174,7 @@ public class Form extends Element {
 				//
 				case ElementTypeID.BTN_SELECT:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_LOOKUPFIELD_TYPENAME, oldLabelText));
 					modifications++;
 					break;

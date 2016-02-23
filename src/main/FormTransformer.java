@@ -31,6 +31,7 @@ public class FormTransformer {
 	public static final String CRLF = System.getProperty("line.separator");
 	public static final char QM = '"'; // quotation mark
 	public static final String SEARCH_ICON_IMAGEMEDIA_ID = "07a009d2-0a86-49d1-b28c-bff40b764c40";
+	public static final int DEFAULT_MD_INPUT_HEIGHT = 50;
 
 	public static void main(String[] args) {
 
