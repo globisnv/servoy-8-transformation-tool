@@ -1,10 +1,10 @@
 package entities;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 import enums.ElementDatatype;
 import enums.ElementTypeID;
@@ -307,7 +307,7 @@ public class Form extends Element {
 			gridviewFe.otherProperties.put("location", "0, 0");
 			gridviewFe.otherProperties.put("anchors", "11");
 			gridviewFe.otherProperties.put("size", newFormSize.toString());
-			Set<Map<String, String>> displayFoundsetHeaders = new LinkedHashSet<>();
+			Map<Integer, Map<String, String>> displayFoundsetHeaders = new TreeMap<>();
 			Map<String, String> fsDataproviders = new LinkedHashMap<>();
 			String ngFoundset = "";
 
@@ -350,8 +350,17 @@ public class Form extends Element {
 					if (item.jsonItems.containsKey("cellTemplate")) {
 						displayFoundsetHeader.put("cellTemplate", item.jsonItems.get("cellTemplate"));
 					}
+					// position of column
+					int position = 0;
+					if (item.otherProperties.containsKey("location")) {
+						XYinteger xyPos = new XYinteger(item.otherProperties.get("location"));
+						position = xyPos.getX();
+					} 
+					while (displayFoundsetHeaders.containsKey(position)) {
+						position++;
+					}
 					displayFoundsetHeader.put("dpXfromFS", "dp" + i);
-					displayFoundsetHeaders.add(displayFoundsetHeader);
+					displayFoundsetHeaders.put(position, displayFoundsetHeader);
 					fsDataproviders.put("dp" + i, item.name);
 					i++;
 					item.setTransformedTrue();
@@ -380,7 +389,7 @@ public class Form extends Element {
 			builder = new StringBuilder();
 			builder.append("[").append(FormTransformer.CRLF);
 
-			for (Map<String, String> displayFoundsetHeader : displayFoundsetHeaders) {
+			for (Map<String, String> displayFoundsetHeader : displayFoundsetHeaders.values()) {
 				builder.append("{").append(FormTransformer.CRLF);
 				for (Entry<String, String> entry : displayFoundsetHeader.entrySet()) {
 					builder.append(entry.getKey()).append(": ");
