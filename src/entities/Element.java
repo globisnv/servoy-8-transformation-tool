@@ -66,6 +66,9 @@ public abstract class Element {
 		if (jsonObj.has("name")) {
 			this.name = jsonObj.getString("name");
 		} else {
+			try {
+				Thread.sleep(10L);
+			} catch (InterruptedException e) {}
 			this.name = "transfName_" + String.valueOf(new Date().getTime());
 		}
 		this.uuid = jsonObj.getString("uuid");

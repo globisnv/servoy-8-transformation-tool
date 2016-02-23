@@ -114,28 +114,28 @@ public class Form extends Element {
 				case ElementTypeID.INPUT_TEXTFIELD:
 					// TODO : ifLabelExists method algemeen ?
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
-					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TEXTFIELD_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_CHECKBOX:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
-					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_BUTTON_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_CHECKBOX_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_COMBOBOX:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
-					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_COMBOBOX_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_CALENDAR:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
-					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_DATEPICKER_TYPENAME, oldLabelText));
 					modifications++;
 					break;
@@ -148,33 +148,35 @@ public class Form extends Element {
 				//
 				case ElementTypeID.INPUT_TYPEAHEAD:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
-					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_TYPEAHEAD_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_RADIO:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_BUTTON_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_RADIO_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.INPUT_PASSWORD:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
-					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_INPUT_PASSWORD_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.BUTTON:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_BUTTON_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_BUTTON_TYPENAME, oldLabelText));
 					modifications++;
 					break;
 				//
 				case ElementTypeID.BTN_SELECT:
 					oldLabelText = ifLabelExistsSetTransformedTrue(oldFe.name);
-					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_MD_INPUT_HEIGHT);
+					oldFe.setSizeHeightIfSmaller(FormTransformer.DEFAULT_INPUT_HEIGHT);
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_LOOKUPFIELD_TYPENAME, oldLabelText));
 					modifications++;
 					break;
@@ -223,7 +225,11 @@ public class Form extends Element {
 		int modifications = 0;
 
 		XYinteger newFormSize = new XYinteger(newForm.otherProperties.get("size"));
-		XYinteger parentSize = new XYinteger(parentFe.otherProperties.get("size"));
+		XYinteger parentSize = new XYinteger("100,100"); /* default */
+		if (parentFe != null && parentFe.otherProperties.containsKey("size")) {
+			parentSize = new XYinteger(parentFe.otherProperties.get("size"));
+		} 
+
 		// parentSize > newFormSize ?
 		if (parentSize.getX() > newFormSize.getX()) {
 			newFormSize.setX(parentSize.getX());
@@ -311,9 +317,12 @@ public class Form extends Element {
 			// CREATE ONE GRIDVIEW OUT OF ALL TEMP GRIDVIEWS
 			FormElement gridviewFe = new FormElement("gridview", ElementTypeID.MD_INPUT);
 			gridviewFe.otherProperties.put("typeName", ElementTypeID.UI_GRIDVIEW_TYPENAME);
-			gridviewFe.otherProperties.put("location", "0, 0");
-			gridviewFe.otherProperties.put("anchors", "11");
-			gridviewFe.otherProperties.put("size", newFormSize.toString());
+			gridviewFe.otherProperties.put("location", "2, 2");
+			gridviewFe.otherProperties.put("anchors", "15");
+			XYinteger gridviewSize = new XYinteger(newFormSize.toString());
+			gridviewSize.setX(gridviewSize.getX() - 4);
+			gridviewSize.setY(gridviewSize.getY() - 4);
+			gridviewFe.otherProperties.put("size", gridviewSize.toString());
 			Map<Integer, Map<String, String>> displayFoundsetHeaders = new TreeMap<>();
 			Map<String, String> fsDataproviders = new LinkedHashMap<>();
 			String ngFoundset = "";
@@ -323,10 +332,14 @@ public class Form extends Element {
 				if (!item.isTransformed() && item.typeid == ElementTypeID.UI_GRIDVIEW_TEMP) {
 					Map<String, String> displayFoundsetHeader = new LinkedHashMap<>();
 					// headerTitle
-					if (item.jsonItems.containsKey("label")) {
+					if (item.jsonItems.containsKey("label") && item.jsonItems.get("label").length() > 0) {
 						displayFoundsetHeader.put("headerTitle", item.jsonItems.get("label"));
 					} else {
-						displayFoundsetHeader.put("headerTitle", item.name);
+						if (item.jsonItems.containsKey("titleText")) {
+							displayFoundsetHeader.put("headerTitle", item.jsonItems.get("titleText"));
+						} else {
+							displayFoundsetHeader.put("headerTitle", item.name);
+						}
 					}
 					// columnWidth
 					if (item.otherProperties.containsKey("size")) {

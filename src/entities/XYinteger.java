@@ -15,6 +15,7 @@ public class XYinteger {
 			throw new FormTransformerException("string can not be NULL");
 		}
 		string = string.replaceAll("\"", "");
+		string = string.replaceAll(" ", "");
 		String[] numbers = string.split(",");
 		if (numbers.length != 2) throw new FormTransformerException("Incorrect argument ["+string+"]");
 		try {

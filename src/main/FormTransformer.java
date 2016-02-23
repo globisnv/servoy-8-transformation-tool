@@ -31,15 +31,16 @@ public class FormTransformer {
 	public static final String CRLF = System.getProperty("line.separator");
 	public static final char QM = '"'; // quotation mark
 	public static final String SEARCH_ICON_IMAGEMEDIA_ID = "07a009d2-0a86-49d1-b28c-bff40b764c40";
-	public static final int DEFAULT_MD_INPUT_HEIGHT = 50;
+	public static final int DEFAULT_INPUT_HEIGHT = 50;
+	public static final int DEFAULT_BUTTON_HEIGHT = 50;
 
 	public static void main(String[] args) {
 
 		try {
 
-			String path = "C:/Users/geert.haegens/workspaces/servoy8testMagWeg/ghaTest/forms";
-			// String path =
-			// "C:/Users/geert.haegens/workspaces/servoy8new12022016/globis_attributes/forms";
+			//String path = "C:/Users/geert.haegens/workspaces/servoy8testMagWeg/ghaTest/forms";
+			String path = "C:/Users/geert.haegens/workspaces/servoy8new12022016/globis_articles/forms";
+			
 
 			Set<String> pathAndFilenamesNoExt = FileDAO.scanStructure(path);
 			System.out.println("Forms to scan :  " + pathAndFilenamesNoExt.size());
@@ -59,7 +60,7 @@ public class FormTransformer {
 				Form newForm = null;
 				switch (oldForm.getView()) {
 				case FormView.RECORD_VIEW:
-					//newForm = oldForm.transform7dtl();
+					newForm = oldForm.transform7dtl();
 					break;
 				case FormView.TABLE_VIEW:
 					FormElement parentFe = Form.findParentFormElement(oldForm.getUUID(), oldForms);
