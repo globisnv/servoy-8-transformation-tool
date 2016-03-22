@@ -335,8 +335,8 @@ public class Form extends Element {
 					if (item.jsonItems.containsKey("label") && item.jsonItems.get("label").length() > 0) {
 						displayFoundsetHeader.put("headerTitle", item.jsonItems.get("label"));
 					} else {
-						if (item.jsonItems.containsKey("titleText")) {
-							displayFoundsetHeader.put("headerTitle", item.jsonItems.get("titleText"));
+						if (item.jsonItems.containsKey("text")) {
+							displayFoundsetHeader.put("headerTitle", item.jsonItems.get("text"));
 						} else {
 							displayFoundsetHeader.put("headerTitle", item.name);
 						}
@@ -370,6 +370,8 @@ public class Form extends Element {
 					if (item.jsonItems.containsKey("cellTemplate")) {
 						displayFoundsetHeader.put("cellTemplate", item.jsonItems.get("cellTemplate"));
 					}
+					// name
+					displayFoundsetHeader.put("name", item.name);
 					// position of column
 					int position = 0;
 					if (item.otherProperties.containsKey("location")) {
@@ -381,7 +383,7 @@ public class Form extends Element {
 					}
 					displayFoundsetHeader.put("dpXfromFS", "dp" + i);
 					displayFoundsetHeaders.put(position, displayFoundsetHeader);
-					fsDataproviders.put("dp" + i, item.name);
+					fsDataproviders.put("dp" + i, displayFoundsetHeader.get("dataProviderID"));
 					i++;
 					item.setTransformedTrue();
 					// System.out.println("\nitem : \n"+item);

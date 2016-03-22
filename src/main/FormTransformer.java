@@ -16,9 +16,13 @@ import enums.ElementTypeID;
 import enums.FormView;
 import exceptions.FormTransformerException;
 
-// TODO : mdRadio.spec + .html => valuelist = valuelistID
-// TODO : mdRadio.spec  =>containsFormId = containsFormID
-// TODO : tabPanel.spec  =>containsFormId = containsFormID
+// TODO : gekende problemen :
+/*
+ * methodID = "-1" => -1 (zoniet :  error in UUID string -1
+ * forms met java beans = niet ondersteund !  zoeken : javax.swing in *.frm
+ * ng$ form heeft ALERTS ?
+ */
+
 
 public class FormTransformer {
 
@@ -32,14 +36,14 @@ public class FormTransformer {
 	public static final char QM = '"'; // quotation mark
 	public static final String SEARCH_ICON_IMAGEMEDIA_ID = "07a009d2-0a86-49d1-b28c-bff40b764c40";
 	public static final int DEFAULT_INPUT_HEIGHT = 50;
-	public static final int DEFAULT_BUTTON_HEIGHT = 50;
+	public static final int DEFAULT_BUTTON_HEIGHT = 30;
 
 	public static void main(String[] args) {
 
 		try {
 
-			//String path = "C:/Users/geert.haegens/workspaces/servoy8testMagWeg/ghaTest/forms";
-			String path = "C:/Users/geert.haegens/workspaces/servoy8new12022016/globis_articles/forms";
+			String path = "C:/Users/geert.haegens/workspaces/servoy8testMagWeg/ghaTest/forms";
+			//String path = "C:/Users/geert.haegens/workspaces/servoy8new12022016/globis_articles/forms";
 			
 
 			Set<String> pathAndFilenamesNoExt = FileDAO.scanStructure(path);
