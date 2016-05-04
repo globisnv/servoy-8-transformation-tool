@@ -1,0 +1,16 @@
+* text=auto !eol
+/.classpath -text
+/.project -text
+.settings/org.eclipse.jdt.core.prefs -text
+.settings/org.eclipse.m2e.core.prefs -text
+/pom.xml -text
+src/daos/FileDAO.java -text
+src/entities/Element.java -text
+src/entities/Form.java -text
+src/entities/FormElement.java -text
+src/entities/XYinteger.java -text
+src/enums/ElementDatatype.java -text
+src/enums/ElementTypeID.java -text
+src/enums/FormView.java -text
+src/exceptions/FormTransformerException.java -text
+src/main/FormTransformer.java -text
