@@ -1,7 +1,6 @@
 package entities;
 
-import exceptions.FormTransformerException;
-import main.FormTransformer;
+import exceptions.CommonMethodException;
 
 public class XYinteger {
 	
@@ -9,20 +8,20 @@ public class XYinteger {
 	private int y = 0;
 	
 	// CONSTRUCTORS
-	public XYinteger(String string) throws FormTransformerException {
+	public XYinteger(String string) throws CommonMethodException {
 		super();
 		if (string == null) {
-			throw new FormTransformerException("string can not be NULL");
+			throw new CommonMethodException("string can not be NULL");
 		}
 		string = string.replaceAll("\"", "");
 		string = string.replaceAll(" ", "");
 		String[] numbers = string.split(",");
-		if (numbers.length != 2) throw new FormTransformerException("Incorrect argument ["+string+"]");
+		if (numbers.length != 2) throw new CommonMethodException("Incorrect argument ["+string+"]");
 		try {
 			this.x = Integer.valueOf(numbers[0]);
 			this.y = Integer.valueOf(numbers[1]);
 		} catch (NumberFormatException ex) {
-			throw new FormTransformerException(ex);
+			throw new CommonMethodException(ex);
 		}
 		
 		

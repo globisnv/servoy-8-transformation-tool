@@ -12,10 +12,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import enums.CharValues;
 import enums.ElementDatatype;
 import enums.ElementTypeID;
-import exceptions.FormTransformerException;
-import main.FormTransformer;
+import exceptions.CommonMethodException;
 
 public abstract class Element {
 
@@ -126,7 +126,7 @@ public abstract class Element {
 		{
 			System.err.println("ERROR in jsonString");
 			System.out.println(jsonString + "\n");
-			throw new FormTransformerException(e);
+			throw new CommonMethodException(e);
 		}
 
 	}
@@ -204,39 +204,39 @@ public abstract class Element {
 
 	protected String toServoyForm() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("uuid: ").append(FormTransformer.QM).append(this.uuid).append(FormTransformer.QM).append(",")
-				.append(FormTransformer.CRLF);
-		builder.append("typeid: ").append(this.typeid).append(",").append(FormTransformer.CRLF);
-		builder.append("name: ").append(FormTransformer.QM).append(this.name).append(FormTransformer.QM);
+		builder.append("uuid: ").append(CharValues.QM).append(this.uuid).append(CharValues.QM).append(",")
+				.append(CharValues.CRLF);
+		builder.append("typeid: ").append(this.typeid).append(",").append(CharValues.CRLF);
+		builder.append("name: ").append(CharValues.QM).append(this.name).append(CharValues.QM);
 
 		if (this.otherProperties.size() > 0) {
-			builder.append(",").append(FormTransformer.CRLF);
+			builder.append(",").append(CharValues.CRLF);
 
 			for (Entry<String, String> otherProp : this.otherProperties.entrySet()) {
 				String propValue = otherProp.getValue();
 				if (Element.getElementKeyValueDatatype(otherProp.getKey()) == ElementDatatype.STRING) {
-					propValue = FormTransformer.QM + propValue + FormTransformer.QM;
+					propValue = CharValues.QM + propValue + CharValues.QM;
 				}
 				builder.append(otherProp.getKey()).append(": ").append(propValue).append(",")
-						.append(FormTransformer.CRLF);
+						.append(CharValues.CRLF);
 			}
 			builder.setLength(builder.length() - 3);
 		}
 		if (this.items.size() > 0) {
-			builder.append("," + FormTransformer.CRLF);
-			builder.append("items: [" + FormTransformer.CRLF);
+			builder.append("," + CharValues.CRLF);
+			builder.append("items: [" + CharValues.CRLF);
 
 			for (FormElement item : this.items) {
 
 				if (!item.isTransformed()) {
-					builder.append("{" + FormTransformer.CRLF);
+					builder.append("{" + CharValues.CRLF);
 					builder.append(item.toServoyForm());
-					builder.append(FormTransformer.CRLF + "}").append("," + FormTransformer.CRLF);
+					builder.append(CharValues.CRLF + "}").append("," + CharValues.CRLF);
 				}
 
 			}
 			builder.setLength(builder.length() - 3);
-			builder.append(FormTransformer.CRLF + "]" + FormTransformer.CRLF);
+			builder.append(CharValues.CRLF + "]" + CharValues.CRLF);
 		}
 		return builder.toString();
 	}

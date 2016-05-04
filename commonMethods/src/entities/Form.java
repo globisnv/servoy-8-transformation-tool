@@ -6,11 +6,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import enums.CharValues;
 import enums.ElementDatatype;
 import enums.ElementTypeID;
+import enums.Filename;
 import enums.FormView;
-import exceptions.FormTransformerException;
-import main.FormTransformer;
+import exceptions.CommonMethodException;
 
 public class Form extends Element {
 
@@ -93,13 +94,14 @@ public class Form extends Element {
 		return null;
 	}
 
-	public Form transform7dtl() throws FormTransformerException {
+	/*
+	public Form transform7dtl() throws CommonMethodException {
 
 		if (this.isTransformed()) {
 			return null;
 		}
 
-		Form newForm = new Form(FormTransformer.NG_PREFIX + this.name, ElementTypeID.FORM, this.path);
+		Form newForm = new Form(Filename.NG_PREFIX + this.name, ElementTypeID.FORM, this.path);
 		newForm.otherProperties = this.otherProperties;
 		newForm.jsFile = this.jsFile;
 
@@ -183,7 +185,7 @@ public class Form extends Element {
 				//
 				case ElementTypeID.TAB_PANEL:
 					newForm.items.add(oldFe.transform(ElementTypeID.MD_TABPANEL_TYPENAME,
-							FormTransformer.NG_PREFIX + oldFe.name));
+							Filename.NG_PREFIX + oldFe.name));
 					modifications++;
 					break;
 				//
@@ -206,18 +208,21 @@ public class Form extends Element {
 			// else :
 			this.setTransformedTrue();
 			return newForm;
-		} catch (FormTransformerException e) {
-			throw new FormTransformerException(e);
+			
+		} catch (CommonMethodException e) {
+			throw new CommonMethodException(e);
 		}
+		
 	}
+	*/
 
-	public Form transform7lst(FormElement parentFe) throws FormTransformerException {
+	public Form transform7lst(FormElement parentFe) throws CommonMethodException {
 
 		if (this.isTransformed()) {
 			return null;
 		}
 
-		Form newForm = new Form(FormTransformer.NG_PREFIX + this.name, ElementTypeID.FORM, this.path);
+		Form newForm = new Form(Filename.NG_PREFIX + this.name, ElementTypeID.FORM, this.path);
 		newForm.otherProperties = this.otherProperties;
 		newForm.otherProperties.put("view", String.valueOf(FormView.RECORD_VIEW));
 		newForm.jsFile = this.jsFile;
@@ -255,7 +260,7 @@ public class Form extends Element {
 							modifications++;
 						}
 					} catch (NumberFormatException ex) {/* do nothing */
-					} catch (FormTransformerException ex) {
+					} catch (CommonMethodException ex) {
 						/* do nothing */}
 
 					if (!oldFe.isTransformed()) {
@@ -393,52 +398,52 @@ public class Form extends Element {
 
 			// ngFoundset
 			StringBuilder builder = new StringBuilder();
-			builder.append("{").append(FormTransformer.CRLF).append("foundsetSelector: ").append(FormTransformer.QM)
-					.append(ngFoundset).append(FormTransformer.QM).append(",").append(FormTransformer.CRLF)
-					.append("dataproviders: ").append(FormTransformer.CRLF).append("{").append(FormTransformer.CRLF);
+			builder.append("{").append(CharValues.CRLF).append("foundsetSelector: ").append(CharValues.QM)
+					.append(ngFoundset).append(CharValues.QM).append(",").append(CharValues.CRLF)
+					.append("dataproviders: ").append(CharValues.CRLF).append("{").append(CharValues.CRLF);
 			for (Entry<String, String> entry : fsDataproviders.entrySet()) {
-				builder.append(entry.getKey()).append(": ").append(FormTransformer.QM).append(entry.getValue())
-						.append(FormTransformer.QM).append(",").append(FormTransformer.CRLF);
+				builder.append(entry.getKey()).append(": ").append(CharValues.QM).append(entry.getValue())
+						.append(CharValues.QM).append(",").append(CharValues.CRLF);
 			}
 			if (fsDataproviders.size() > 0) {
 				builder.setLength(builder.length() - 3);
 			}
-			builder.append(FormTransformer.CRLF).append("}").append(FormTransformer.CRLF).append(FormTransformer.CRLF)
-					.append("}").append(FormTransformer.CRLF);
+			builder.append(CharValues.CRLF).append("}").append(CharValues.CRLF).append(CharValues.CRLF)
+					.append("}").append(CharValues.CRLF);
 			gridviewFe.jsonItems.put("ngFoundset", builder.toString());
 
 			// displayFoundsetHeaders
 			builder = new StringBuilder();
-			builder.append("[").append(FormTransformer.CRLF);
+			builder.append("[").append(CharValues.CRLF);
 
 			for (Map<String, String> displayFoundsetHeader : displayFoundsetHeaders.values()) {
-				builder.append("{").append(FormTransformer.CRLF);
+				builder.append("{").append(CharValues.CRLF);
 				for (Entry<String, String> entry : displayFoundsetHeader.entrySet()) {
 					builder.append(entry.getKey()).append(": ");
 					if (Element.elementKeyValueDatatypes.get(entry.getKey()) == ElementDatatype.STRING) {
-						builder.append(FormTransformer.QM).append(entry.getValue()).append(FormTransformer.QM);
+						builder.append(CharValues.QM).append(entry.getValue()).append(CharValues.QM);
 
 					} else {
 						builder.append(entry.getValue());
 					}
-					builder.append(",").append(FormTransformer.CRLF);
+					builder.append(",").append(CharValues.CRLF);
 				}
 				if (displayFoundsetHeader.size() > 0) {
 					builder.setLength(builder.length() - 3);
 				}
-				builder.append(FormTransformer.CRLF).append("},").append(FormTransformer.CRLF);
+				builder.append(CharValues.CRLF).append("},").append(CharValues.CRLF);
 			}
 			if (displayFoundsetHeaders.size() > 0) {
 				builder.setLength(builder.length() - 3);
 			}
-			builder.append(FormTransformer.CRLF).append("]").append(FormTransformer.CRLF);
+			builder.append(CharValues.CRLF).append("]").append(CharValues.CRLF);
 			gridviewFe.jsonItems.put("displayFoundsetHeaders", builder.toString());
 
 			newForm.items.add(gridviewFe);
 
 			return newForm;
-		} catch (FormTransformerException e) {
-			throw new FormTransformerException(e);
+		} catch (CommonMethodException e) {
+			throw new CommonMethodException(e);
 		}
 	}
 

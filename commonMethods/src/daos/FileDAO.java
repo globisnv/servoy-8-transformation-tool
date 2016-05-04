@@ -19,8 +19,9 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import entities.Form;
-import exceptions.FormTransformerException;
-import main.FormTransformer;
+import enums.CharValues;
+import enums.Filename;
+import exceptions.CommonMethodException;
 
 public class FileDAO {
 
@@ -29,36 +30,36 @@ public class FileDAO {
 	public FileDAO() {
 	}
 
-	public static Form readForm(String pathFilenameNoExt) throws FormTransformerException {
+	public static Form readForm(String pathFilenameNoExt) throws CommonMethodException {
 
 		int lastIndexOfSlash = pathFilenameNoExt.lastIndexOf('\\');
 		String path = pathFilenameNoExt.substring(0, lastIndexOfSlash + 1);
 
 		Form form = null;
 		try {
-			String frmString = readFile(pathFilenameNoExt + FormTransformer.FORM_EXT);
-			FormTransformer.scanForImmutableUuids(frmString);
+			String frmString = readFile(pathFilenameNoExt + Filename.FORM_EXT);
+			//FormTransformer.scanForImmutableUuids(frmString);
 			form = new Form("{" + frmString + "}", path);
 
 			// read .js file
-			if (Files.exists(Paths.get(pathFilenameNoExt + FormTransformer.JS_EXT))) {
-				form.setJsFile(readFile(pathFilenameNoExt + FormTransformer.JS_EXT));
-				FormTransformer.scanForUuids(form.getJsFile());
+			if (Files.exists(Paths.get(pathFilenameNoExt + Filename.JS_EXT))) {
+				form.setJsFile(readFile(pathFilenameNoExt + Filename.JS_EXT));
+				//FormTransformer.scanForUuids(form.getJsFile());
 			}
-		} catch (FormTransformerException e) {
-			throw new FormTransformerException(e);
+		} catch (CommonMethodException e) {
+			throw new CommonMethodException(e);
 		}
 		return form;
 	}
 
-	public static void writeForm(Form form) throws FormTransformerException {
+	public static void writeForm(Form form) throws CommonMethodException {
 
 		String pathAndFilename = form.getPath() + form.getName();
 
 		try {
 			String outputFrm = form.toServoyForm();
 			String outputJS = form.getJsFile();
-
+			/*
 			if (outputFrm != null) {
 				for (Entry<String, String> entry : FormTransformer.getUuidMap().entrySet()) {
 					outputFrm = outputFrm.replace(entry.getKey(), entry.getValue());
@@ -69,17 +70,17 @@ public class FileDAO {
 					outputJS = outputJS.replace(entry.getKey(), entry.getValue());
 				}
 			}
-
-			writeFile(pathAndFilename + FormTransformer.FORM_EXT, outputFrm);
+			 */
+			writeFile(pathAndFilename + Filename.FORM_EXT, outputFrm);
 			if (form.getJsFile() != null) {
-				writeFile(pathAndFilename + FormTransformer.JS_EXT, outputJS);
+				writeFile(pathAndFilename + Filename.JS_EXT, outputJS);
 			}
-		} catch (FormTransformerException e) {
-			throw new FormTransformerException(e);
+		} catch (CommonMethodException e) {
+			throw new CommonMethodException(e);
 		}
 	}
 
-	private static String readFile(String pathAndFilename) throws FormTransformerException {
+	private static String readFile(String pathAndFilename) throws CommonMethodException {
 		byte[] encoded;
 
 		try {
@@ -92,20 +93,20 @@ public class FileDAO {
 
 			return diryString;
 		} catch (IOException e) {
-			throw new FormTransformerException(e);
+			throw new CommonMethodException(e);
 		}
 
 	}
 
-	private static void writeFile(String pathAndFilename, String fileContent) throws FormTransformerException {
+	private static void writeFile(String pathAndFilename, String fileContent) throws CommonMethodException {
 		if (Files.exists(Paths.get(pathAndFilename))) {
-			throw new FormTransformerException("File [" + pathAndFilename + "] already exists !\n");
+			throw new CommonMethodException("File [" + pathAndFilename + "] already exists !\n");
 		}
 		try {
 			Files.write(Paths.get(pathAndFilename), fileContent.getBytes("utf-8"), StandardOpenOption.CREATE,
 					StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (IOException e) {
-			throw new FormTransformerException(e);
+			throw new CommonMethodException(e);
 		}
 	}
 
@@ -127,9 +128,9 @@ public class FileDAO {
 			}
 			if (!file.isDirectory() && Pattern.matches(".+\\.frm$", file.getName().toLowerCase())) {
 				String newNgFilename = fileAbsPath.replace('\\' + file.getName(),
-						'\\' + FormTransformer.NG_PREFIX + file.getName());
+						'\\' + Filename.NG_PREFIX + file.getName());
 				String fileNameNoPath = fileAbsPath.substring(fileAbsPath.lastIndexOf('\\') + 1);
-				if (fileNameNoPath.startsWith(FormTransformer.NG_PREFIX)) {
+				if (fileNameNoPath.startsWith(Filename.NG_PREFIX)) {
 					continue;
 				}
 				if (!Files.exists(Paths.get(newNgFilename))) {
@@ -137,7 +138,7 @@ public class FileDAO {
 					pathsNoExt.add(file.getAbsolutePath().toLowerCase().substring(0, lenghtNoExt));
 				} else {
 					String frmString = readFile(file.getAbsolutePath());
-					FormTransformer.scanForImmutableUuids(frmString);
+					//FormTransformer.scanForImmutableUuids(frmString);
 				}
 			}
 		}
@@ -145,25 +146,25 @@ public class FileDAO {
 		return pathsNoExt;
 	}
 	
-	public static void writeLog(String path, Map<String, Boolean> log) throws FormTransformerException {
+	public static void writeLog(String path, Map<String, Boolean> log) throws CommonMethodException {
 		
 		String filename = path + "formTransformer_" + String.valueOf(new Date().getTime()) + ".log";
 		if (Files.exists(Paths.get(filename))) {
-			throw new FormTransformerException("File [" + filename + "] already exists !\n");
+			throw new CommonMethodException("File [" + filename + "] already exists !\n");
 		}
 		
 		StringBuilder builder = new StringBuilder();
-		builder.append("ERRORS : "+log.containsValue(false)+FormTransformer.CRLF);
+		builder.append("ERRORS : "+log.containsValue(false)+CharValues.CRLF);
 		for (Entry<String, Boolean> entry : log.entrySet()) {
 			if (!entry.getValue()) {
-				builder.append(entry.getKey()+FormTransformer.CRLF);
+				builder.append(entry.getKey()+CharValues.CRLF);
 			}
 		}
-		builder.append(FormTransformer.CRLF);
-		builder.append("NOTHING TO DO : "+log.containsValue(true)+FormTransformer.CRLF);
+		builder.append(CharValues.CRLF);
+		builder.append("NOTHING TO DO : "+log.containsValue(true)+CharValues.CRLF);
 		for (Entry<String, Boolean> entry : log.entrySet()) {
 			if (entry.getValue()) {
-				builder.append(entry.getKey()+FormTransformer.CRLF);
+				builder.append(entry.getKey()+CharValues.CRLF);
 			}
 		}
 		
@@ -172,7 +173,7 @@ public class FileDAO {
 					StandardOpenOption.TRUNCATE_EXISTING);
 			System.out.println("Log :  "+filename);
 		} catch (IOException e) {
-			throw new FormTransformerException(e);
+			throw new CommonMethodException(e);
 		}
 	}
 

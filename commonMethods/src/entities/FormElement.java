@@ -6,10 +6,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import enums.CharValues;
 import enums.ElementDatatype;
 import enums.ElementTypeID;
-import exceptions.FormTransformerException;
-import main.FormTransformer;
+import enums.UUIDvalues;
+import exceptions.CommonMethodException;
 
 public class FormElement extends Element {
 
@@ -42,41 +43,41 @@ public class FormElement extends Element {
 
 		if (this.jsonItems.size() > 0) {
 
-			builder.append("," + FormTransformer.CRLF + "json: {" + FormTransformer.CRLF);
+			builder.append("," + CharValues.CRLF + "json: {" + CharValues.CRLF);
 			
 			if (this.jsonTabs.size() > 0) {
-				builder.append("tabs: [" + FormTransformer.CRLF);
+				builder.append("tabs: [" + CharValues.CRLF);
 				for (Map<String, String> jsonTab : this.jsonTabs) {
 					builder.append("{");
 					for (Entry<String, String> jsonTabItem : jsonTab.entrySet()) {
 						builder.append(jsonTabItem.getKey()).append(": ")
-						.append(FormTransformer.QM + jsonTabItem.getValue() + FormTransformer.QM).append(", ");
+						.append(CharValues.QM + jsonTabItem.getValue() + CharValues.QM).append(", ");
 					}
-					builder.append("active: true"+FormTransformer.CRLF);
-					builder.append("},"+FormTransformer.CRLF);
+					builder.append("active: true"+CharValues.CRLF);
+					builder.append("},"+CharValues.CRLF);
 				}
 				builder.setLength(builder.length() - 3);
-				builder.append(FormTransformer.CRLF + "]," + FormTransformer.CRLF);
-				builder.append(FormTransformer.CRLF + "visible: true," + FormTransformer.CRLF);
+				builder.append(CharValues.CRLF + "]," + CharValues.CRLF);
+				builder.append(CharValues.CRLF + "visible: true," + CharValues.CRLF);
 			}
 
 			for (Entry<String, String> jsonItem : this.jsonItems.entrySet()) {
 				String itemValue = jsonItem.getValue();
 				if (Element.getElementKeyValueDatatype(jsonItem.getKey()) == ElementDatatype.STRING) {
-					itemValue = FormTransformer.QM + itemValue + FormTransformer.QM;
+					itemValue = CharValues.QM + itemValue + CharValues.QM;
 				}
-				builder.append(jsonItem.getKey()).append(": ").append(itemValue).append(",").append(FormTransformer.CRLF);
+				builder.append(jsonItem.getKey()).append(": ").append(itemValue).append(",").append(CharValues.CRLF);
 			}
 			if (this.jsonItems.size() > 0) {
 				builder.setLength(builder.length() - 3);
 			}
-			builder.append("}" + FormTransformer.CRLF);
+			builder.append("}" + CharValues.CRLF);
 		}
 		return builder.toString();
 	}
 
 	private static void moveFromOtherProperties(Map<String, String> source, Map<String, String> destination,
-			String key) throws FormTransformerException {
+			String key) throws CommonMethodException {
 		if (source.containsKey(key)) {
 			destination.put(key, source.get(key));
 			source.remove(key);
@@ -99,7 +100,7 @@ public class FormElement extends Element {
 				// has no "labelFor" & has onDoubleClickMethodID : considered BUTTON
 				return ElementTypeID.BUTTON;
 			}
-			if (this.typeid == ElementTypeID.LABEL && this.otherProperties.containsValue(FormTransformer.SEARCH_ICON_IMAGEMEDIA_ID)) {
+			if (this.typeid == ElementTypeID.LABEL && this.otherProperties.containsValue(UUIDvalues.SEARCH_ICON_IMAGEMEDIA_ID)) {
 				// has no "labelFor" & has the UNIQUE uuid for the search icon
 				return ElementTypeID.BTN_SELECT;
 			}
@@ -119,7 +120,7 @@ public class FormElement extends Element {
 	}
 
 	protected FormElement transform(String mdComponentIdentifier, String oldLabelText)
-			throws FormTransformerException {
+			throws CommonMethodException {
 
 		FormElement newFe;
 
@@ -181,7 +182,7 @@ public class FormElement extends Element {
 			
 			break;
 		default:
-			throw new FormTransformerException("Not a valid mdComponentIdentifier ["+mdComponentIdentifier+"] !");
+			throw new CommonMethodException("Not a valid mdComponentIdentifier ["+mdComponentIdentifier+"] !");
 		}
 
 		// other props - if present
