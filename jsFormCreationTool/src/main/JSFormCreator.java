@@ -55,7 +55,7 @@ public class JSFormCreator {
 				if (newJSform != null) {
 					//uuidMap.put(oldForm.getUUID(), newForm.getUUID());
 					newForms.add(newJSform);
-					JSForm newTMPform = JSForm.createTMPform(oldForm);
+					JSForm newTMPform = JSForm.createTMPform(oldForm, newJSform.getUUID());
 					if (newTMPform != null) {
 						newForms.add(newTMPform);
 					}

@@ -28,8 +28,8 @@ public class JSForm extends Form {
 		// TODO : CRITERIA for js$Form creation
 		
 		JSForm newForm = new JSForm(Filename.JS_PREFIX + form.name, ElementTypeID.FORM, form.path);
-		//newForm.otherProperties = this.otherProperties;
 		newForm.otherProperties = new HashMap<>(form.otherProperties);
+		// keep only element BODY
 		newForm.items = new HashSet<>();
 		for (FormElement element : form.items) {
 			if (element.typeid == ElementTypeID.BODY) {
@@ -46,11 +46,11 @@ public class JSForm extends Form {
 		return newForm;
 	}
 	
-	public static JSForm createTMPform(Form form) throws JSFormCreationException {
+	public static JSForm createTMPform(Form form, String jsFormUUID) throws JSFormCreationException {
 
 		JSForm newForm = new JSForm(Filename.TMP_PREFIX + form.name, ElementTypeID.FORM, form.path);
-		//newForm.otherProperties = this.otherProperties;
 		newForm.otherProperties = new HashMap<>(form.otherProperties);
+		newForm.otherProperties.put("extendsID", jsFormUUID);
 		newForm.items = new HashSet<>(form.items);
 		if (form.jsFile != null) {
 			newForm.jsFile = new String(JSForm.jscommentsOfTMPform(Filename.JS_PREFIX + form.name + Filename.JS_EXT));
