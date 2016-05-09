@@ -21,6 +21,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import entities.Form;
 import enums.CharValues;
 import enums.Filename;
+import enums.UUIDmap;
 import exceptions.CommonMethodException;
 
 public class FileDAO {
@@ -38,13 +39,13 @@ public class FileDAO {
 		Form form = null;
 		try {
 			String frmString = readFile(pathFilenameNoExt + Filename.FORM_EXT);
-			//FormTransformer.scanForImmutableUuids(frmString);
+			UUIDmap.scanForImmutableUuids(frmString);
 			form = new Form("{" + frmString + "}", path);
 
 			// read .js file
 			if (Files.exists(Paths.get(pathFilenameNoExt + Filename.JS_EXT))) {
 				form.setJsFile(readFile(pathFilenameNoExt + Filename.JS_EXT));
-				//FormTransformer.scanForUuids(form.getJsFile());
+				UUIDmap.scanForUuids(form.getJsFile());
 			}
 		} catch (CommonMethodException e) {
 			throw new CommonMethodException(e);
@@ -59,18 +60,18 @@ public class FileDAO {
 		try {
 			String outputFrm = form.toServoyForm();
 			String outputJS = form.getJsFile();
-			/*
+			
 			if (outputFrm != null) {
-				for (Entry<String, String> entry : FormTransformer.getUuidMap().entrySet()) {
+				for (Entry<String, String> entry : UUIDmap.getUuidmap().entrySet()) {
 					outputFrm = outputFrm.replace(entry.getKey(), entry.getValue());
 				}
 			}
 			if (outputJS != null) {
-				for (Entry<String, String> entry : FormTransformer.getUuidMap().entrySet()) {
+				for (Entry<String, String> entry : UUIDmap.getUuidmap().entrySet()) {
 					outputJS = outputJS.replace(entry.getKey(), entry.getValue());
 				}
 			}
-			 */
+			
 			writeFile(pathAndFilename + Filename.FORM_EXT, outputFrm);
 			if (form.getJsFile() != null) {
 				writeFile(pathAndFilename + Filename.JS_EXT, outputJS);
