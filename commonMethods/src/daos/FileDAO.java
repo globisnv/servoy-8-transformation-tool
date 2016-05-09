@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
@@ -197,6 +198,27 @@ public class FileDAO {
 		} catch (IOException e) {
 			throw new CommonMethodException(e);
 		}
+	}
+	
+	public static <F extends Form> void replaceOriginalByTMPform(F tmpForm) throws CommonMethodException {
+		if (!tmpForm.getName().startsWith(Filename.TMP_PREFIX)) {
+			throw new CommonMethodException("Illegal argument: " + tmpForm.getName());
+		}
+		Path tmpFrmPathAndFilename = Paths.get(tmpForm.getPath() + tmpForm.getName() + Filename.FORM_EXT);
+		Path tmpJsPathAndFilename = Paths.get(tmpForm.getPath() + tmpForm.getName() + Filename.JS_EXT);
+		String originalFormName = tmpForm.getName().substring(Filename.TMP_PREFIX.length());
+		Path originalFrmPathAndFilename = Paths.get(tmpForm.getPath() + originalFormName + Filename.FORM_EXT);
+		Path originalJsPathAndFilename = Paths.get(tmpForm.getPath() + originalFormName + Filename.JS_EXT);
+
+		try {
+			Files.delete(originalFrmPathAndFilename);
+			Files.deleteIfExists(originalJsPathAndFilename);
+			Files.move(tmpFrmPathAndFilename, tmpFrmPathAndFilename.resolveSibling(originalFormName + Filename.FORM_EXT));
+			Files.move(tmpJsPathAndFilename, tmpJsPathAndFilename.resolveSibling(originalFormName + Filename.JS_EXT));
+		} catch (IOException e) {
+			throw new CommonMethodException(e);
+		}
+		
 	}
 
 }

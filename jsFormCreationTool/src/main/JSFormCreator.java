@@ -26,9 +26,6 @@ import exceptions.JSFormCreationException;
 
 public class JSFormCreator {
 
-	private static Map<String, String> uuidMap = new HashMap<>();
-	private static Set<String> uuidImmutables = new HashSet<>();
-	
 	public static void main(String[] args) {
 
 		try {
@@ -91,6 +88,14 @@ public class JSFormCreator {
 			 // WRITE all js$ & tmp$ forms for (Form newForm : newForms) {
 			for (JSForm newForm : newForms) {
 				FileDAO.writeForm(newForm);
+			}
+			
+			// IF tmp$ :  delete original + rename tmp$
+			for (JSForm newForm : newForms) {
+				if (newForm.getName().startsWith(Filename.TMP_PREFIX)) {
+					FileDAO.replaceOriginalByTMPform(newForm);
+				}
+				
 			}
 			 
 			 System.out.println("Forms written :  "+newForms.size());
