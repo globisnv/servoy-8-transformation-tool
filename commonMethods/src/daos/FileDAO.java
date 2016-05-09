@@ -127,19 +127,40 @@ public class FileDAO {
 				pathsNoExt.addAll(scanStructure(fileAbsPath));
 			}
 			if (!file.isDirectory() && Pattern.matches(".+\\.frm$", file.getName().toLowerCase())) {
-				String newNgFilename = fileAbsPath.replace('\\' + file.getName(),
-						'\\' + Filename.NG_PREFIX + file.getName());
+				
+				
+				// skip file if starts with ng$
 				String fileNameNoPath = fileAbsPath.substring(fileAbsPath.lastIndexOf('\\') + 1);
 				if (fileNameNoPath.startsWith(Filename.NG_PREFIX)) {
 					continue;
 				}
-				if (!Files.exists(Paths.get(newNgFilename))) {
+				// skip file if starts with js$
+				if (fileNameNoPath.startsWith(Filename.JS_PREFIX)) {
+					continue;
+				}
+				// skip file if starts with tmp$
+				if (fileNameNoPath.startsWith(Filename.TMP_PREFIX)) {
+					continue;
+				}
+				
+				/*
+				String newNgFilename = fileAbsPath.replace('\\' + file.getName(),
+						'\\' + Filename.NG_PREFIX + file.getName());
+				
+				String newJsFilename = fileAbsPath.replace('\\' + file.getName(),
+						'\\' + Filename.JS_PREFIX + file.getName());
+				
+				if (!Files.exists(Paths.get(newNgFilename)) && !Files.exists(Paths.get(newJsFilename))) {
 					int lenghtNoExt = file.getAbsolutePath().lastIndexOf('.');
 					pathsNoExt.add(file.getAbsolutePath().toLowerCase().substring(0, lenghtNoExt));
 				} else {
 					String frmString = readFile(file.getAbsolutePath());
-					//FormTransformer.scanForImmutableUuids(frmString);
+					FormTransformer.scanForImmutableUuids(frmString);
 				}
+				*/
+				
+				int lenghtNoExt = file.getAbsolutePath().lastIndexOf('.');
+				pathsNoExt.add(file.getAbsolutePath().toLowerCase().substring(0, lenghtNoExt));
 			}
 		}
 		System.out.println("Scanned : " + dir + " = " + pathsNoExt.size());
@@ -148,7 +169,7 @@ public class FileDAO {
 	
 	public static void writeLog(String path, Map<String, Boolean> log) throws CommonMethodException {
 		
-		String filename = path + "formTransformer_" + String.valueOf(new Date().getTime()) + ".log";
+		String filename = path + "_" + String.valueOf(new Date().getTime()) + ".log";
 		if (Files.exists(Paths.get(filename))) {
 			throw new CommonMethodException("File [" + filename + "] already exists !\n");
 		}

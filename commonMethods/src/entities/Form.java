@@ -15,8 +15,8 @@ import exceptions.CommonMethodException;
 
 public class Form extends Element {
 
-	private String jsFile = null;
-	private final String path;
+	protected String jsFile = null;
+	protected final String path;
 
 	// CONSTRUCTORS
 
@@ -27,9 +27,11 @@ public class Form extends Element {
 
 	public Form(String jsonString, String path) {
 		super(jsonString);
+		//System.out.println("Form:\n" + jsonString);
 		this.path = path;
 
 	}
+	
 
 	// TOSTRING
 	@Override
@@ -467,5 +469,6 @@ public class Form extends Element {
 		return super.toServoyForm();
 
 	}
+	
 
 }

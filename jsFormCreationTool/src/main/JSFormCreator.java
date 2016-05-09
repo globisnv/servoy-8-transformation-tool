@@ -11,6 +11,9 @@ import java.util.regex.Pattern;
 
 import daos.FileDAO;
 import entities.Form;
+import entities.JSForm;
+import enums.ElementTypeID;
+import enums.Filename;
 import exceptions.JSFormCreationException;
 
 // TODO : gekende problemen :
@@ -26,26 +29,17 @@ public class JSFormCreator {
 	private static Map<String, String> uuidMap = new HashMap<>();
 	private static Set<String> uuidImmutables = new HashSet<>();
 	
-	public static final String CRLF = System.getProperty("line.separator");
-	public static final char QM = '"'; // quotation mark
-	
-
-	public static final String SEARCH_ICON_IMAGEMEDIA_ID = "07a009d2-0a86-49d1-b28c-bff40b764c40";
-	public static final int DEFAULT_INPUT_HEIGHT = 50;
-	public static final int DEFAULT_BUTTON_HEIGHT = 30;
-
 	public static void main(String[] args) {
 
 		try {
 
-			String path = "C:/Users/geert.haegens/workspaces/servoy8testMagWeg/newstructure/forms";
-			//String path = "C:/Users/geert.haegens/workspaces/servoy8new12022016/globis_articles/forms";
+			String path = "C:/Users/geert.haegens/workspaces/servoy8testMagWeg/newstructure/forms/";
+			//String path = "C:/Users/geert.haegens/workspaces/servoy8new12022016/globis_articles/forms/";
 			
-
 			Set<String> pathAndFilenamesNoExt = FileDAO.scanStructure(path);
 			System.out.println("Forms to scan :  " + pathAndFilenamesNoExt.size());
 			Set<Form> oldForms = new HashSet<>();
-			Set<Form> newForms = new HashSet<>();
+			Set<JSForm> newForms = new HashSet<>();
 			// true = nothing to do ; false = ERROR
 			Map<String, Boolean> logForms = new LinkedHashMap<>();
 
@@ -57,7 +51,22 @@ public class JSFormCreator {
 			// transform all forms
 			
 			for (Form oldForm : oldForms) {
-				Form newForm = null;
+				JSForm newJSform = JSForm.createJSform(oldForm);
+				if (newJSform != null) {
+					//uuidMap.put(oldForm.getUUID(), newForm.getUUID());
+					newForms.add(newJSform);
+					JSForm newTMPform = JSForm.createTMPform(oldForm);
+					if (newTMPform != null) {
+						newForms.add(newTMPform);
+					}
+				}
+				// add log
+				if (oldForm.getTypeId() == ElementTypeID.INVALID_TRANSFORMATION) {
+					logForms.put(oldForm.getPath() +Filename.FORM_EXT, false);
+				}
+				if (!oldForm.isTransformed()) {
+					logForms.put(oldForm.getPath() + "/" + oldForm.getName() + Filename.FORM_EXT, true);
+				}
 				/*
 				switch (oldForm.getView()) {
 				case FormView.RECORD_VIEW:
@@ -71,31 +80,19 @@ public class JSFormCreator {
 				default:
 					break;
 				}
-
-				if (oldForm.isTransformed() && newForm != null) {
-					uuidMap.put(oldForm.getUUID(), newForm.getUUID());
-					newForms.add(newForm);
-				}
-				// add log
-				if (oldForm.getTypeId() == ElementTypeID.INVALID_TRANSFORMATION) {
-					logForms.put(oldForm.getPath() + JSFormCreator.FORM_EXT, false);
-				}
-				if (!oldForm.isTransformed()) {
-					logForms.put(oldForm.getPath() + "/" + oldForm.getName() + JSFormCreator.FORM_EXT, true);
-				}
-*/
+				 */
 			}
 
 			
 			// WRITE log file
-			FileDAO.writeLog(path, logForms);
+			FileDAO.writeLog(path + "JSFormCreator", logForms);
 			
-			/*
-			 // WRITE all ng$ forms for (Form newForm : newForms) {
-			for (Form newForm : newForms) {
+			
+			 // WRITE all js$ & tmp$ forms for (Form newForm : newForms) {
+			for (JSForm newForm : newForms) {
 				FileDAO.writeForm(newForm);
 			}
-			 */
+			 
 			 System.out.println("Forms written :  "+newForms.size());
 			 
 
