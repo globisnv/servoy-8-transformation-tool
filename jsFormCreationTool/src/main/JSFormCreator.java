@@ -14,6 +14,7 @@ import entities.Form;
 import entities.JSForm;
 import enums.ElementTypeID;
 import enums.Filename;
+import enums.UUIDmap;
 import exceptions.JSFormCreationException;
 
 // TODO : gekende problemen :
@@ -50,7 +51,7 @@ public class JSFormCreator {
 			for (Form oldForm : oldForms) {
 				JSForm newJSform = JSForm.createJSform(oldForm);
 				if (newJSform != null) {
-					//uuidMap.put(oldForm.getUUID(), newForm.getUUID());
+					UUIDmap.uuidMapAdd(oldForm.getUUID(), newJSform.getUUID());
 					newForms.add(newJSform);
 					JSForm newTMPform = JSForm.createTMPform(oldForm, newJSform.getUUID());
 					if (newTMPform != null) {
@@ -64,20 +65,8 @@ public class JSFormCreator {
 				if (!oldForm.isTransformed()) {
 					logForms.put(oldForm.getPath() + "/" + oldForm.getName() + Filename.FORM_EXT, true);
 				}
-				/*
-				switch (oldForm.getView()) {
-				case FormView.RECORD_VIEW:
-					newForm = oldForm.transform7dtl();
-					break;
-				case FormView.TABLE_VIEW:
-					FormElement parentFe = Form.findParentFormElement(oldForm.getUUID(), oldForms);
-					newForm = oldForm.transform7lst(parentFe);
-					newForms.add(newForm);
-					break;
-				default:
-					break;
-				}
-				 */
+				
+				
 			}
 
 			
@@ -91,15 +80,15 @@ public class JSFormCreator {
 			}
 			
 			// IF tmp$ :  delete original + rename tmp$
+			
 			for (JSForm newForm : newForms) {
 				if (newForm.getName().startsWith(Filename.TMP_PREFIX)) {
 					FileDAO.replaceOriginalByTMPform(newForm);
 				}
 				
 			}
-			 
-			 System.out.println("Forms written :  "+newForms.size());
-			 
+			
+			System.out.println("Forms written :  "+newForms.size());
 
 			System.err.println("Done.");
 

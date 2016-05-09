@@ -1,5 +1,6 @@
 package entities;
 
+import enums.ElementTypeID;
 import enums.Filename;
 import exceptions.CommonMethodException;
 
@@ -70,6 +71,19 @@ public class Form extends Element {
 			throw new CommonMethodException("Illegal argument: " + this.name);
 		}
 		this.name = this.getName().substring(Filename.TMP_PREFIX.length());
+	}
+	
+	public boolean hasElements() {
+		for (FormElement item : this.items) {
+			if (item.typeid != ElementTypeID.BODY) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isChildForm() {
+		return this.otherProperties.containsKey("extendsID");
 	}
 
 	

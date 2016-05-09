@@ -13,6 +13,7 @@ public final class UUIDmap {
 	
 	private static final Map<String, String> uuidMap = new HashMap<>();
 	private static final Set<String> uuidImmutables = new HashSet<>();
+	private static final Set<String> uuidParents = new HashSet<>();
 	
 	// CONSTRUCTORS
 	
@@ -29,6 +30,8 @@ public final class UUIDmap {
 	public static Set<String> getUuidimmutables() {
 		return uuidImmutables;
 	}
+	
+	
 	
 	// OTHERS
 	
@@ -52,6 +55,22 @@ public final class UUIDmap {
 		}
 	}
 	
+	public static void scanForParentUuids(String string) {
+		Pattern REG_EX = Pattern.compile("extendsID:.([-0-9A-Za-z]{36})");
+		Matcher m = REG_EX.matcher(string);
+		while (m.find()) {
+			String uuid = m.group(1);
+			uuidParents.add(uuid);
+		}
+	}
 	
+	public static void uuidMapAdd(String oldUuid, String newUuid) {
+		uuidMap.put(oldUuid, newUuid);
+	}
+	
+	public static boolean isParentFrom(String uuid) {
+		return uuidParents.contains(uuid);
+	}
+
 
 }
