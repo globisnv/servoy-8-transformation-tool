@@ -1,5 +1,8 @@
 package entities;
 
+import enums.Filename;
+import exceptions.CommonMethodException;
+
 public class Form extends Element {
 
 	protected String jsFile = null;
@@ -60,6 +63,13 @@ public class Form extends Element {
 
 	public String getPath() {
 		return path;
+	}
+	
+	public void setTMPnameToOriginalName() throws CommonMethodException {
+		if (!this.name.startsWith(Filename.TMP_PREFIX)) {
+			throw new CommonMethodException("Illegal argument: " + this.name);
+		}
+		this.name = this.getName().substring(Filename.TMP_PREFIX.length());
 	}
 
 	

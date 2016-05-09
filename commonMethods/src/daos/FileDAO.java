@@ -210,14 +210,18 @@ public class FileDAO {
 		Path originalFrmPathAndFilename = Paths.get(tmpForm.getPath() + originalFormName + Filename.FORM_EXT);
 		Path originalJsPathAndFilename = Paths.get(tmpForm.getPath() + originalFormName + Filename.JS_EXT);
 
+		// delete both original & tmp$
 		try {
 			Files.delete(originalFrmPathAndFilename);
 			Files.deleteIfExists(originalJsPathAndFilename);
-			Files.move(tmpFrmPathAndFilename, tmpFrmPathAndFilename.resolveSibling(originalFormName + Filename.FORM_EXT));
-			Files.move(tmpJsPathAndFilename, tmpJsPathAndFilename.resolveSibling(originalFormName + Filename.JS_EXT));
+			Files.delete(tmpFrmPathAndFilename);
+			Files.delete(tmpJsPathAndFilename);
 		} catch (IOException e) {
 			throw new CommonMethodException(e);
 		}
+		// change tmp$ form.name & write
+		tmpForm.setTMPnameToOriginalName();
+		FileDAO.writeForm(tmpForm);
 		
 	}
 

@@ -21,7 +21,7 @@ public abstract class Element {
 
 	protected final String uuid;
 	protected Element duplicateOfElement = null;
-	protected final String name;
+	protected String name = "tempFormName";
 	protected final int typeid;
 	protected Set<FormElement> items = new HashSet<>();
 	protected Map<String, String> otherProperties = new HashMap<>();
