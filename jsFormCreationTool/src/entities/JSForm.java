@@ -6,6 +6,7 @@ import java.util.HashSet;
 import enums.CharValues;
 import enums.ElementTypeID;
 import enums.Filename;
+import enums.UUIDmap;
 import exceptions.JSFormCreationException;
 
 public class JSForm extends Form {
@@ -19,28 +20,30 @@ public class JSForm extends Form {
 
 	// OTHERS
 	
-	public static JSForm createJSform(Form form) throws JSFormCreationException {
+	public static JSForm createJSform(Form oldForm) throws JSFormCreationException {
 
-		if (form.isTransformed()) {
+		if (oldForm.isTransformed()) {
 			return null;
 		}
 
 		// TODO : CRITERIA for js$Form creation
 		
-		JSForm newForm = new JSForm(Filename.JS_PREFIX + form.name, ElementTypeID.FORM, form.path);
-		newForm.otherProperties = new HashMap<>(form.otherProperties);
+		JSForm newForm = new JSForm(Filename.JS_PREFIX + oldForm.name, ElementTypeID.FORM, oldForm.path);
+		newForm.otherProperties = new HashMap<>(oldForm.otherProperties);
 		// keep only element BODY
 		newForm.items = new HashSet<>();
-		for (FormElement element : form.items) {
+		for (FormElement element : oldForm.items) {
 			if (element.typeid == ElementTypeID.BODY) {
-				newForm.items.add(element);
+				FormElement newElement = new FormElement(element.name, element.typeid);
+				newElement.otherProperties = new HashMap<>(element.otherProperties);
+				newForm.items.add(newElement);
 				break;
 			}
 		}
-		if (form.jsFile != null) {
-			newForm.jsFile = new String(JSForm.jscommentsOfJSform(form.name+ Filename.JS_EXT) + form.jsFile);
+		if (oldForm.jsFile != null) {
+			newForm.jsFile = new String(JSForm.jscommentsOfJSform(oldForm.name+ Filename.JS_EXT) + oldForm.jsFile);
 		} else {
-			newForm.jsFile = new String(JSForm.jscommentsOfJSform(form.name+ Filename.JS_EXT));
+			newForm.jsFile = new String(JSForm.jscommentsOfJSform(oldForm.name+ Filename.JS_EXT));
 		}
 		
 		return newForm;
@@ -52,9 +55,7 @@ public class JSForm extends Form {
 		newForm.otherProperties = new HashMap<>(form.otherProperties);
 		newForm.otherProperties.put("extendsID", jsFormUUID);
 		newForm.items = new HashSet<>(form.items);
-		if (form.jsFile != null) {
-			newForm.jsFile = new String(JSForm.jscommentsOfTMPform(Filename.JS_PREFIX + form.name + Filename.JS_EXT));
-		}
+		newForm.jsFile = new String(JSForm.jscommentsOfTMPform(Filename.JS_PREFIX + form.name + Filename.JS_EXT));
 		
 		return newForm;
 	}

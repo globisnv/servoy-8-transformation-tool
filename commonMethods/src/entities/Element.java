@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import enums.CharValues;
 import enums.ElementDatatype;
 import enums.ElementTypeID;
+import enums.UUIDmap;
 import exceptions.CommonMethodException;
 
 public abstract class Element {
@@ -33,7 +34,7 @@ public abstract class Element {
 
 	protected Element(Element element, boolean transformedValue) {
 		super();
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUIDmap.createUniqueUuid();
 		this.duplicateOfElement = element;
 		this.name = element.name;
 		this.typeid = element.typeid;
@@ -44,7 +45,7 @@ public abstract class Element {
 
 	protected Element(String name, int typeid) {
 		super();
-		this.uuid = UUID.randomUUID().toString();
+		this.uuid = UUIDmap.createUniqueUuid();
 		this.name = name;
 		this.typeid = typeid;
 	}
@@ -57,7 +58,7 @@ public abstract class Element {
 			jsonObj.getInt("typeid");
 		} catch (JSONException e) {
 			this.name = "invalidTransformation";
-			this.uuid = UUID.randomUUID().toString();
+			this.uuid = UUIDmap.createUniqueUuid();
 			this.typeid = ElementTypeID.INVALID_TRANSFORMATION;
 			this.transformed = true;
 			return;

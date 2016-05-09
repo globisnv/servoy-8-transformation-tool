@@ -57,6 +57,7 @@ public class JSFormCreator {
 					if (newTMPform != null) {
 						newForms.add(newTMPform);
 					}
+					oldForm.setTransformedTrue();
 				}
 				// add log
 				if (oldForm.getTypeId() == ElementTypeID.INVALID_TRANSFORMATION) {

@@ -14,6 +14,7 @@ public final class UUIDmap {
 	private static final Map<String, String> uuidMap = new HashMap<>();
 	private static final Set<String> uuidImmutables = new HashSet<>();
 	private static final Set<String> uuidParents = new HashSet<>();
+	private static final Set<String> uuidAll = new HashSet<>();
 	
 	// CONSTRUCTORS
 	
@@ -41,7 +42,7 @@ public final class UUIDmap {
 		while (m.find()) {
 			String uuid = m.group(1);
 			if (!uuidImmutables.contains(uuid) && !uuidMap.containsKey(uuid)) {
-				uuidMap.put(uuid, UUID.randomUUID().toString());
+				uuidMap.put(uuid, createUniqueUuid());
 			}
 		}
 	}
@@ -51,7 +52,9 @@ public final class UUIDmap {
 		Pattern REG_EX = Pattern.compile("valuelistID:.([-0-9A-Za-z]{36})");
 		Matcher m = REG_EX.matcher(string);
 		while (m.find()) {
-			uuidImmutables.add(m.group(1));
+			String uuid = m.group(1);
+			uuidImmutables.add(uuid);
+			uuidAll.add(uuid);
 		}
 	}
 	
@@ -61,6 +64,7 @@ public final class UUIDmap {
 		while (m.find()) {
 			String uuid = m.group(1);
 			uuidParents.add(uuid);
+			uuidAll.add(uuid);
 		}
 	}
 	
@@ -70,6 +74,19 @@ public final class UUIDmap {
 	
 	public static boolean isParentFrom(String uuid) {
 		return uuidParents.contains(uuid);
+	}
+	
+	public static boolean isUnique(String newUuid) {
+		return !uuidAll.contains(newUuid);
+	}
+	
+	public static String createUniqueUuid() {
+		String newUuid = UUID.randomUUID().toString();
+		while (!isUnique(newUuid)) {
+			newUuid = UUID.randomUUID().toString();
+		}
+		uuidAll.add(newUuid);
+		return newUuid;
 	}
 
 
