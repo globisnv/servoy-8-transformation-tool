@@ -230,5 +230,10 @@ public class FileDAO {
 		FileDAO.writeForm(tmpForm);
 		
 	}
+	
+	public static boolean fileWithPrefixJSexists(Form form) {
+		String filename = form.getPath() + Filename.JS_PREFIX + form.getName() + Filename.FORM_EXT;
+		return Files.exists(Paths.get(filename));
+	}
 
 }

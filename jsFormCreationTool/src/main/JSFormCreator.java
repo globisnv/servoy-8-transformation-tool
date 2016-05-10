@@ -1,13 +1,9 @@
 package main;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import daos.FileDAO;
 import entities.Form;
@@ -31,8 +27,9 @@ public class JSFormCreator {
 
 		try {
 
-			String path = "C:/Users/geert.haegens/workspaces/servoy8testMagWeg/newstructure/forms/";
+			String path = "C:/Users/geert.haegens/workspaces/servoy7testMagWeg/newstructure/forms/";
 			//String path = "C:/Users/geert.haegens/workspaces/servoy8new12022016/globis_articles/forms/";
+			//String path = "C:/Users/geert.haegens/workspaces/upg8git";
 			
 			Set<String> pathAndFilenamesNoExt = FileDAO.scanStructure(path);
 			System.out.println("Forms to scan :  " + pathAndFilenamesNoExt.size());
@@ -48,17 +45,21 @@ public class JSFormCreator {
 
 			// transform all forms
 			
+			String parentUuid = null;
 			for (Form oldForm : oldForms) {
 				JSForm newJSform = JSForm.createJSform(oldForm);
 				if (newJSform != null) {
 					UUIDmap.uuidMapAdd(oldForm.getUUID(), newJSform.getUUID());
 					newForms.add(newJSform);
-					JSForm newTMPform = JSForm.createTMPform(oldForm, newJSform.getUUID());
-					if (newTMPform != null) {
-						newForms.add(newTMPform);
-					}
-					oldForm.setTransformedTrue();
+					parentUuid = newJSform.getUUID();
 				}
+				
+				JSForm newTMPform = JSForm.createTMPform(oldForm, parentUuid);
+				if (newTMPform != null) {
+					newForms.add(newTMPform);
+				}
+					
+				
 				// add log
 				if (oldForm.getTypeId() == ElementTypeID.INVALID_TRANSFORMATION) {
 					logForms.put(oldForm.getPath() +Filename.FORM_EXT, false);
@@ -99,13 +100,6 @@ public class JSFormCreator {
 
 	}
 
-	// GETTERS & SETTERS
-
-	
-
-	// OTHERS
-
-	
 	
 	
 

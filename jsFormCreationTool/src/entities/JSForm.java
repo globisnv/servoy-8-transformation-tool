@@ -3,10 +3,10 @@ package entities;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import daos.FileDAO;
 import enums.CharValues;
 import enums.ElementTypeID;
 import enums.Filename;
-import enums.UUIDmap;
 import exceptions.JSFormCreationException;
 
 public class JSForm extends Form {
@@ -26,37 +26,52 @@ public class JSForm extends Form {
 			return null;
 		}
 
-		// TODO : CRITERIA for js$Form creation
+		// CRITERIA for js$Form creation
+		if (oldForm.isChildForm()) {
+			return null;
+		}
+		if (!oldForm.hasElements()) {
+			//System.out.println("no elem :  " + oldForm.name);
+			return null;
+		}
+		if (FileDAO.fileWithPrefixJSexists(oldForm)) {
+			return null;
+		}
+		// ^^^ CRITERIA
 		
 		JSForm newForm = new JSForm(Filename.JS_PREFIX + oldForm.name, ElementTypeID.FORM, oldForm.path);
 		newForm.otherProperties = new HashMap<>(oldForm.otherProperties);
-		// keep only element BODY
-		newForm.items = new HashSet<>();
-		for (FormElement element : oldForm.items) {
-			if (element.typeid == ElementTypeID.BODY) {
-				FormElement newElement = new FormElement(element.name, element.typeid);
-				newElement.otherProperties = new HashMap<>(element.otherProperties);
-				newForm.items.add(newElement);
-				break;
-			}
-		}
+		
 		if (oldForm.jsFile != null) {
 			newForm.jsFile = new String(JSForm.jscommentsOfJSform(oldForm.name+ Filename.JS_EXT) + oldForm.jsFile);
 		} else {
 			newForm.jsFile = new String(JSForm.jscommentsOfJSform(oldForm.name+ Filename.JS_EXT));
 		}
 		
+		oldForm.setTransformedTrue();
 		return newForm;
 	}
 	
-	public static JSForm createTMPform(Form form, String jsFormUUID) throws JSFormCreationException {
-
-		JSForm newForm = new JSForm(Filename.TMP_PREFIX + form.name, ElementTypeID.FORM, form.path);
-		newForm.otherProperties = new HashMap<>(form.otherProperties);
-		newForm.otherProperties.put("extendsID", jsFormUUID);
-		newForm.items = new HashSet<>(form.items);
-		newForm.jsFile = new String(JSForm.jscommentsOfTMPform(Filename.JS_PREFIX + form.name + Filename.JS_EXT));
+	public static JSForm createTMPform(Form oldForm, String jsFormUUID) throws JSFormCreationException {
 		
+		// CRITERIA for tmp$Form creation
+		if (!oldForm.hasElements()) {
+			return null;
+		}
+		if (FileDAO.fileWithPrefixJSexists(oldForm)) {
+			return null;
+		}
+		// ^^^ CRITERIA
+		
+		JSForm newForm = new JSForm(Filename.TMP_PREFIX + oldForm.name, ElementTypeID.FORM, oldForm.path);
+		newForm.otherProperties = new HashMap<>(oldForm.otherProperties);
+		if (jsFormUUID != null) {
+			newForm.otherProperties.put("extendsID", jsFormUUID);
+		}
+		newForm.items = new HashSet<>(oldForm.items);
+		newForm.jsFile = new String(JSForm.jscommentsOfTMPform(Filename.JS_PREFIX + oldForm.name + Filename.JS_EXT));
+		
+		oldForm.setTransformedTrue();
 		return newForm;
 	}
 	
