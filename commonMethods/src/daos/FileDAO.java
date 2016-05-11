@@ -46,7 +46,7 @@ public class FileDAO {
 			// read .js file
 			if (Files.exists(Paths.get(pathFilenameNoExt + Filename.JS_EXT))) {
 				form.setJsFile(readFile(pathFilenameNoExt + Filename.JS_EXT));
-				UUIDmap.scanForUuids(form.getJsFile());
+				//UUIDmap.scanForUuids(form.getJsFile()); probleem voor js$creator !
 				UUIDmap.scanForParentUuids(form.getJsFile());
 			}
 		} catch (CommonMethodException e) {

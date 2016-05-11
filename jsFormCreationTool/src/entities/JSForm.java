@@ -27,9 +27,6 @@ public class JSForm extends Form {
 		}
 
 		// CRITERIA for js$Form creation
-		if (oldForm.isChildForm()) {
-			return null;
-		}
 		if (!oldForm.hasElements()) {
 			//System.out.println("no elem :  " + oldForm.name);
 			return null;
@@ -43,9 +40,9 @@ public class JSForm extends Form {
 		newForm.otherProperties = new HashMap<>(oldForm.otherProperties);
 		
 		if (oldForm.jsFile != null) {
-			newForm.jsFile = new String(JSForm.jscommentsOfJSform(oldForm.name+ Filename.JS_EXT) + oldForm.jsFile);
+			newForm.jsFile = new String(JSForm.jscommentsOfJSform(oldForm.name+ Filename.FORM_EXT) + oldForm.jsFile);
 		} else {
-			newForm.jsFile = new String(JSForm.jscommentsOfJSform(oldForm.name+ Filename.JS_EXT));
+			newForm.jsFile = new String(JSForm.jscommentsOfJSform(oldForm.name+ Filename.FORM_EXT));
 		}
 		
 		oldForm.setTransformedTrue();
@@ -76,11 +73,11 @@ public class JSForm extends Form {
 	}
 	
 	
-	private static String jscommentsOfJSform(String contentMovedFromFilename) {
+	private static String jscommentsOfJSform(String contentMovedFromFormName) {
 		StringBuilder comments = new StringBuilder();
-		comments.append("// DO NOT REMOVE COMMENTS").append(CharValues.CRLF)
-		.append("// Old structure filename = ")
-		.append(contentMovedFromFilename).append(CharValues.CRLF)
+		comments.append("// DO NOT REMOVE COMMENTS !  ")
+		.append("Contains jsCode for child form = ")
+		.append(contentMovedFromFormName).append(CharValues.CRLF)
 		.append("//").append(CharValues.CRLF);
 		return comments.toString();
 	}
