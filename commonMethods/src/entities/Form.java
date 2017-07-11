@@ -1,13 +1,18 @@
 package entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import enums.ElementTypeID;
 import enums.Filename;
+import enums.UUIDmap;
 import exceptions.CommonMethodException;
 
 public class Form extends Element {
 
 	protected String jsFile = null;
 	protected final String path;
+	public List<LogEntry> logEntries = new ArrayList<>();
 
 	// CONSTRUCTORS
 
@@ -20,10 +25,8 @@ public class Form extends Element {
 		super(jsonString);
 		//System.out.println("Form:\n" + jsonString);
 		this.path = path;
-
 	}
 	
-
 	// TOSTRING
 	@Override
 	public String toString() {
@@ -85,6 +88,11 @@ public class Form extends Element {
 	public boolean isChildForm() {
 		return this.otherProperties.containsKey("extendsID");
 	}
+	
+	public boolean isParentForm() {
+		return UUIDmap.isParentForm(this.uuid);
+	}
+	
 
 	
 	@Override

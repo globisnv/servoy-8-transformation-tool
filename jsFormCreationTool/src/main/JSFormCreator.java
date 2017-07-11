@@ -1,15 +1,19 @@
 package main;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 import daos.FileDAO;
+import entities.Element;
 import entities.Form;
 import entities.JSForm;
+import entities.LogEntry;
 import enums.ElementTypeID;
 import enums.Filename;
+import enums.LogLevel;
+import enums.LogType;
 import enums.UUIDmap;
 import exceptions.JSFormCreationException;
 
@@ -22,63 +26,63 @@ import exceptions.JSFormCreationException;
 
 
 public class JSFormCreator {
+	
+	public static List<LogEntry> logEntries = new ArrayList<>();
 
 	public static void main(String[] args) {
 
 		try {
-
-			String path = "C:/Users/geert.haegens/workspaces/servoy7testMagWeg/newstructure/forms/";
-			//String path = "C:/Users/geert.haegens/workspaces/servoy8new12022016/globis_articles/forms/";
-			//String path = "C:/Users/geert.haegens/workspaces/upg8git";
+			
+			// do not apply a default name if element has none
+			Element.setAllowNullableName(true);
+			
+			//String path = "C:/Users/geert.haegens/workspaces/GO8ws_DO_NOT_USE/globis_articles/forms";
+			String path = "C:/Users/geert.haegens/workspaces/servoy8testMagWeg/struct_multiparents/forms/";
 			
 			Set<String> pathAndFilenamesNoExt = FileDAO.scanStructure(path);
+			logEntries.addAll(FileDAO.logEntries);
 			System.out.println("Forms to scan :  " + pathAndFilenamesNoExt.size());
 			Set<Form> oldForms = new HashSet<>();
 			Set<JSForm> newForms = new HashSet<>();
-			// true = nothing to do ; false = ERROR
-			Map<String, Boolean> logForms = new LinkedHashMap<>();
-
+			
 			// read all forms
 			for (String formPathAndFilenamesNoExt : pathAndFilenamesNoExt) {
 				oldForms.add(FileDAO.readForm(formPathAndFilenamesNoExt));
+				logEntries.addAll(FileDAO.logEntries);
 			}
-
+			
 			// transform all forms
 			
 			String parentUuid = null;
 			for (Form oldForm : oldForms) {
 				JSForm newJSform = JSForm.createJSform(oldForm);
+				
 				if (newJSform != null) {
-					UUIDmap.uuidMapAdd(oldForm.getUUID(), newJSform.getUUID());
 					newForms.add(newJSform);
 					parentUuid = newJSform.getUUID();
-				}
-				
-				JSForm newTMPform = JSForm.createTMPform(oldForm, parentUuid);
-				if (newTMPform != null) {
-					newForms.add(newTMPform);
+					JSForm newTMPform = JSForm.createTMPform(oldForm, parentUuid);
+					if (newTMPform != null) {
+						UUIDmap.uuidMapAdd(newTMPform.getUUID(), oldForm.getUUID());
+						newForms.add(newTMPform);
+					}
 				}
 					
-				
 				// add log
 				if (oldForm.getTypeId() == ElementTypeID.INVALID_TRANSFORMATION) {
-					logForms.put(oldForm.getPath() +Filename.FORM_EXT, false);
+					logEntries.add(new LogEntry(LogLevel.ERROR, LogType.CREATE, oldForm, "INVALID_TRANSFORMATION"));
 				}
+				/*
 				if (!oldForm.isTransformed()) {
-					logForms.put(oldForm.getPath() + "/" + oldForm.getName() + Filename.FORM_EXT, true);
-				}
-				
+					logEntries.add(new LogEntry(LogLevel.ERROR, LogType.CREATE, oldForm, "TRANSFORMATION FAILED"));
+				}*/
+				logEntries.addAll(oldForm.logEntries);
 				
 			}
-
-			
-			// WRITE log file
-			FileDAO.writeLog(path + "JSFormCreator", logForms);
-			
 			
 			 // WRITE all js$ & tmp$ forms for (Form newForm : newForms) {
 			for (JSForm newForm : newForms) {
 				FileDAO.writeForm(newForm);
+				logEntries.addAll(FileDAO.logEntries);
 			}
 			
 			// IF tmp$ :  delete original + rename tmp$
@@ -86,11 +90,15 @@ public class JSFormCreator {
 			for (JSForm newForm : newForms) {
 				if (newForm.getName().startsWith(Filename.TMP_PREFIX)) {
 					FileDAO.replaceOriginalByTMPform(newForm);
+					logEntries.addAll(FileDAO.logEntries);
 				}
-				
 			}
 			
-			System.out.println("Forms written :  "+newForms.size());
+			
+			// WRITE log file
+			FileDAO.writeLog(path + "JSFormCreator", logEntries);
+						
+			System.out.println("Forms written :  " + newForms.size());
 
 			System.err.println("Done.");
 

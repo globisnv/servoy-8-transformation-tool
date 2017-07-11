@@ -29,12 +29,13 @@ public abstract class Element {
 	protected static Map<String, ElementDatatype> elementKeyValueDatatypes = ElementDatatype
 			.newElementKeyValueDatatypes();
 	private boolean transformed = false;
+	private static boolean allowNullableName = false;
 
 	// CONSTRUCTORS
 
 	protected Element(Element element, boolean transformedValue) {
 		super();
-		this.uuid = UUIDmap.createUniqueUuid();
+		this.uuid = UUIDmap.createUniqueUuid().toUpperCase();
 		this.duplicateOfElement = element;
 		this.name = element.name;
 		this.typeid = element.typeid;
@@ -45,7 +46,7 @@ public abstract class Element {
 
 	protected Element(String name, int typeid) {
 		super();
-		this.uuid = UUIDmap.createUniqueUuid();
+		this.uuid = UUIDmap.createUniqueUuid().toUpperCase();
 		this.name = name;
 		this.typeid = typeid;
 	}
@@ -58,7 +59,7 @@ public abstract class Element {
 			jsonObj.getInt("typeid");
 		} catch (JSONException e) {
 			this.name = "invalidTransformation";
-			this.uuid = UUIDmap.createUniqueUuid();
+			this.uuid = UUIDmap.createUniqueUuid().toUpperCase();
 			this.typeid = ElementTypeID.INVALID_TRANSFORMATION;
 			this.transformed = true;
 			return;
@@ -67,10 +68,15 @@ public abstract class Element {
 		if (jsonObj.has("name")) {
 			this.name = jsonObj.getString("name");
 		} else {
-			try {
-				Thread.sleep(10L);
-			} catch (InterruptedException e) {}
-			this.name = "transfName_" + String.valueOf(new Date().getTime());
+			if (!allowNullableName) {
+				try {
+					Thread.sleep(10L);
+				} catch (InterruptedException e) {}
+				this.name = "transfName_" + String.valueOf(new Date().getTime());
+			} else {
+				this.name = "";
+			}
+			
 		}
 		this.uuid = jsonObj.getString("uuid");
 		this.typeid = jsonObj.getInt("typeid");
@@ -192,6 +198,10 @@ public abstract class Element {
 		if (this.duplicateOfElement != null && !this.duplicateOfElement.isTransformed()) {
 			this.duplicateOfElement.setTransformedTrue();
 		}
+	}
+	
+	public static void setAllowNullableName(Boolean value) {
+		allowNullableName = value;
 	}
 
 	// OTHERS

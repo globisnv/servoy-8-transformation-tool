@@ -1,16 +1,20 @@
 package entities;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import daos.FileDAO;
 import enums.CharValues;
 import enums.ElementTypeID;
 import enums.Filename;
+import enums.LogLevel;
+import enums.LogType;
 import exceptions.JSFormCreationException;
 
 public class JSForm extends Form {
-
+	
 	// CONSTRUCTORS
 
 	protected JSForm(String name, int typeid, String path) {
@@ -23,15 +27,25 @@ public class JSForm extends Form {
 	public static JSForm createJSform(Form oldForm) throws JSFormCreationException {
 
 		if (oldForm.isTransformed()) {
+			oldForm.logEntries.add(new LogEntry(LogLevel.DEBUG, LogType.SKIPPED, oldForm, "form was already transformed"));
 			return null;
 		}
-
+		if (oldForm.isParentForm() && oldForm.hasElements()) {
+			oldForm.logEntries.add(new LogEntry(LogLevel.WARNING, LogType.SKIPPED, oldForm, "form is parent form with elements"));
+			return null;
+		}
+		
 		// CRITERIA for js$Form creation
 		if (!oldForm.hasElements()) {
-			//System.out.println("no elem :  " + oldForm.name);
+			oldForm.logEntries.add(new LogEntry(LogLevel.DEBUG, LogType.SKIPPED, oldForm, "form has no elements"));
+			return null;
+		}
+		if (oldForm.isParentForm()) {
+			oldForm.logEntries.add(new LogEntry(LogLevel.DEBUG, LogType.SKIPPED, oldForm, "form is parent form"));
 			return null;
 		}
 		if (FileDAO.fileWithPrefixJSexists(oldForm)) {
+			oldForm.logEntries.addAll(FileDAO.logEntries);
 			return null;
 		}
 		// ^^^ CRITERIA
@@ -53,9 +67,11 @@ public class JSForm extends Form {
 		
 		// CRITERIA for tmp$Form creation
 		if (!oldForm.hasElements()) {
+			oldForm.logEntries.add(new LogEntry(LogLevel.DEBUG, LogType.SKIPPED, oldForm, "form has no elements"));
 			return null;
 		}
 		if (FileDAO.fileWithPrefixJSexists(oldForm)) {
+			oldForm.logEntries.addAll(FileDAO.logEntries);
 			return null;
 		}
 		// ^^^ CRITERIA
@@ -74,20 +90,23 @@ public class JSForm extends Form {
 	
 	
 	private static String jscommentsOfJSform(String contentMovedFromFormName) {
+		/*
 		StringBuilder comments = new StringBuilder();
 		comments.append("// DO NOT REMOVE COMMENTS !  ")
 		.append("Contains jsCode for child form = ")
 		.append(contentMovedFromFormName).append(CharValues.CRLF)
 		.append("//").append(CharValues.CRLF);
-		return comments.toString();
+		return comments.toString();*/
+		return "";
 	}
 	
 	private static String jscommentsOfTMPform(String contentMovedToFilename) {
 		StringBuilder comments = new StringBuilder();
-		comments.append("// IMPORTANT: DO NOT ALTER THE CONTENT OF THIS FILE !").append(CharValues.CRLF)
+		comments.append("// IMPORTANT: DO NOT ALTER THE CONTENT OF THIS FILE !").append(CharValues.CRLF);
+		/*
 				.append("// New structure filename = ")
 				.append(contentMovedToFilename).append(CharValues.CRLF)
-				.append("//").append(CharValues.CRLF);
+				.append("//").append(CharValues.CRLF);*/
 		return comments.toString();
 	}
 

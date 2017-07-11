@@ -7,10 +7,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -20,12 +21,16 @@ import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import entities.Form;
-import enums.CharValues;
+import entities.LogEntry;
 import enums.Filename;
+import enums.LogLevel;
+import enums.LogType;
 import enums.UUIDmap;
 import exceptions.CommonMethodException;
 
 public class FileDAO {
+	
+	public static List<LogEntry> logEntries = new ArrayList<>();
 
 	// CONSTRUCTORS
 
@@ -36,18 +41,21 @@ public class FileDAO {
 
 		int lastIndexOfSlash = pathFilenameNoExt.lastIndexOf('\\');
 		String path = pathFilenameNoExt.substring(0, lastIndexOfSlash + 1);
+		
+		logEntries = new ArrayList<>();
 
 		Form form = null;
 		try {
 			String frmString = readFile(pathFilenameNoExt + Filename.FORM_EXT);
 			UUIDmap.scanForImmutableUuids(frmString);
 			form = new Form("{" + frmString + "}", path);
-
+			logEntries.add(new LogEntry(LogLevel.INFO, LogType.READ, form, "servoy frm doc"));
+			UUIDmap.scanForParentUuids(frmString);
+			
 			// read .js file
 			if (Files.exists(Paths.get(pathFilenameNoExt + Filename.JS_EXT))) {
 				form.setJsFile(readFile(pathFilenameNoExt + Filename.JS_EXT));
-				//UUIDmap.scanForUuids(form.getJsFile()); probleem voor js$creator !
-				UUIDmap.scanForParentUuids(form.getJsFile());
+				logEntries.add(new LogEntry(LogLevel.INFO, LogType.READ, form, "javascript doc"));
 			}
 		} catch (CommonMethodException e) {
 			throw new CommonMethodException(e);
@@ -57,6 +65,7 @@ public class FileDAO {
 
 	public static void writeForm(Form form) throws CommonMethodException {
 
+		logEntries = new ArrayList<>();
 		String pathAndFilename = form.getPath() + form.getName();
 
 		try {
@@ -75,8 +84,10 @@ public class FileDAO {
 			}
 
 			writeFile(pathAndFilename + Filename.FORM_EXT, outputFrm);
+			logEntries.add(new LogEntry(LogLevel.INFO, LogType.WRITE, form, "write servoy form"));
 			if (form.getJsFile() != null) {
 				writeFile(pathAndFilename + Filename.JS_EXT, outputJS);
+				logEntries.add(new LogEntry(LogLevel.INFO, LogType.WRITE, form, "write javascript file"));
 			}
 		} catch (CommonMethodException e) {
 			throw new CommonMethodException(e);
@@ -114,6 +125,9 @@ public class FileDAO {
 	}
 
 	public static Set<String> scanStructure(String path) {
+		
+		logEntries = new ArrayList<>();
+		
 		File dir = new File(path);
 		if (dir.getName().startsWith(".", 0)) {
 			return null;
@@ -134,14 +148,17 @@ public class FileDAO {
 				// skip file if starts with ng$
 				String fileNameNoPath = fileAbsPath.substring(fileAbsPath.lastIndexOf('\\') + 1);
 				if (fileNameNoPath.startsWith(Filename.NG_PREFIX)) {
+					logEntries.add(new LogEntry(LogLevel.DEBUG, LogType.INVENTORY, null, "skipped because of prefix " + Filename.NG_PREFIX + ": " + file.getName()));
 					continue;
 				}
 				// skip file if starts with js$
 				if (fileNameNoPath.startsWith(Filename.JS_PREFIX)) {
+					logEntries.add(new LogEntry(LogLevel.DEBUG, LogType.INVENTORY, null, "skipped because of prefix " + Filename.JS_PREFIX + ": " + file.getName()));
 					continue;
 				}
 				// skip file if starts with tmp$
 				if (fileNameNoPath.startsWith(Filename.TMP_PREFIX)) {
+					logEntries.add(new LogEntry(LogLevel.DEBUG, LogType.INVENTORY, null, "skipped because of prefix " + Filename.TMP_PREFIX + ": " + file.getName()));
 					continue;
 				}
 
@@ -163,26 +180,30 @@ public class FileDAO {
 
 				int lenghtNoExt = file.getAbsolutePath().lastIndexOf('.');
 				pathsNoExt.add(file.getAbsolutePath().toLowerCase().substring(0, lenghtNoExt));
+				logEntries.add(new LogEntry(LogLevel.INFO, LogType.INVENTORY, null, "added: " + file.getName()));
 			}
 		}
 		System.out.println("Scanned : " + dir + " = " + pathsNoExt.size());
 		return pathsNoExt;
 	}
 
-	public static void writeLog(String path, Map<String, Boolean> log) throws CommonMethodException {
+	public static void writeLog(String path, List<LogEntry> log) throws CommonMethodException {
 
-		String filename = path + "_" + String.valueOf(new Date().getTime()) + ".log";
+		String filename = path + "_" + String.valueOf(new Date().getTime()) + ".csv";
 		if (Files.exists(Paths.get(filename))) {
 			throw new CommonMethodException("File [" + filename + "] already exists !\n");
 		}
 
 		StringBuilder builder = new StringBuilder();
-		builder.append("ERRORS : " + log.containsValue(false) + CharValues.CRLF);
-		for (Entry<String, Boolean> entry : log.entrySet()) {
-			if (!entry.getValue()) {
-				builder.append(entry.getKey() + CharValues.CRLF);
+		//builder.append("ERRORS : " + log.containsValue(false) + CharValues.CRLF);
+		LogEntry header = new LogEntry(null, null, null, null);
+		builder.append(header.headerToString());
+		for (LogEntry entry : log) {
+			if (entry.log()) {
+				builder.append(entry.toString());
 			}
 		}
+		/*
 		builder.append(CharValues.CRLF);
 		builder.append("NOTHING TO DO : " + log.containsValue(true) + CharValues.CRLF);
 		for (Entry<String, Boolean> entry : log.entrySet()) {
@@ -190,7 +211,7 @@ public class FileDAO {
 				builder.append(entry.getKey() + CharValues.CRLF);
 			}
 		}
-
+*/
 		try {
 			Files.write(Paths.get(filename), builder.toString().getBytes("utf-8"), StandardOpenOption.CREATE,
 					StandardOpenOption.TRUNCATE_EXISTING);
@@ -201,6 +222,9 @@ public class FileDAO {
 	}
 
 	public static <F extends Form> void replaceOriginalByTMPform(F tmpForm) throws CommonMethodException {
+		
+		List<LogEntry> replaceLogEntries = new ArrayList<>();
+		
 		if (!tmpForm.getName().startsWith(Filename.TMP_PREFIX)) {
 			throw new CommonMethodException("Illegal argument: " + tmpForm.getName());
 		}
@@ -213,27 +237,43 @@ public class FileDAO {
 		// delete both original & tmp$
 		try {
 			Files.delete(originalFrmPathAndFilename);
-			Files.deleteIfExists(originalJsPathAndFilename);
+			replaceLogEntries.add(new LogEntry(LogLevel.DEBUG, LogType.DELETE, null, "Delete original: " + originalFormName + Filename.FORM_EXT));
+			if (Files.deleteIfExists(originalJsPathAndFilename)) {
+				replaceLogEntries.add(new LogEntry(LogLevel.DEBUG, LogType.DELETE, null, "Delete original: " + originalFormName + Filename.JS_EXT));
+			}
 			Files.delete(tmpFrmPathAndFilename);
+			replaceLogEntries.add(new LogEntry(LogLevel.DEBUG, LogType.DELETE, tmpForm, "Delete temp: servoy form doc"));
 			Files.delete(tmpJsPathAndFilename);
+			replaceLogEntries.add(new LogEntry(LogLevel.DEBUG, LogType.DELETE, tmpForm, "Delete temp: javascript doc"));
 		} catch (IOException e) {
 			throw new CommonMethodException(e);
 		}
 		
 		// tmpForm has no element & is not parentForm ? original form can be deleted, only js$ is kept !
-		if (!tmpForm.hasElements() && !UUIDmap.isParentFrom(tmpForm.getUUID())) {
+		if (!tmpForm.hasElements() && !UUIDmap.isParentForm(tmpForm.getUUID())) {
+			replaceLogEntries.add(new LogEntry(LogLevel.WARNING, LogType.DELETE, tmpForm, "Orignal replaced by js$form: orginal had no elements and is not a parent form"));
+			logEntries = replaceLogEntries;
 			return;
 		}
 		
 		// change tmp$ form.name & write
 		tmpForm.setTMPnameToOriginalName();
 		FileDAO.writeForm(tmpForm);
-		
+		replaceLogEntries.addAll(logEntries);
+		logEntries = replaceLogEntries;
 	}
 	
 	public static boolean fileWithPrefixJSexists(Form form) {
-		String filename = form.getPath() + Filename.JS_PREFIX + form.getName() + Filename.FORM_EXT;
-		return Files.exists(Paths.get(filename));
+		
+		logEntries = new ArrayList<>();
+		String filename = Filename.JS_PREFIX + form.getName() + Filename.FORM_EXT;
+		String path = form.getPath() + filename;
+		Boolean exists = Files.exists(Paths.get(path));
+		if (exists) {
+			logEntries.add(new LogEntry(LogLevel.DEBUG, LogType.SKIPPED, form, "Allready exists: " + filename));
+		}
+		
+		return exists;
 	}
 
 }

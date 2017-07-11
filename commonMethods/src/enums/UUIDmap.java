@@ -40,7 +40,7 @@ public final class UUIDmap {
 		Pattern REG_EX = Pattern.compile("uuid:.([-0-9A-Za-z]{36})");
 		Matcher m = REG_EX.matcher(string);
 		while (m.find()) {
-			String uuid = m.group(1);
+			String uuid = m.group(1).toUpperCase();
 			if (!uuidImmutables.contains(uuid) && !uuidMap.containsKey(uuid)) {
 				uuidMap.put(uuid, createUniqueUuid());
 			}
@@ -52,7 +52,7 @@ public final class UUIDmap {
 		Pattern REG_EX = Pattern.compile("valuelistID:.([-0-9A-Za-z]{36})");
 		Matcher m = REG_EX.matcher(string);
 		while (m.find()) {
-			String uuid = m.group(1);
+			String uuid = m.group(1).toUpperCase();
 			uuidImmutables.add(uuid);
 			uuidAll.add(uuid);
 		}
@@ -62,7 +62,7 @@ public final class UUIDmap {
 		Pattern REG_EX = Pattern.compile("extendsID:.([-0-9A-Za-z]{36})");
 		Matcher m = REG_EX.matcher(string);
 		while (m.find()) {
-			String uuid = m.group(1);
+			String uuid = m.group(1).toUpperCase();
 			uuidParents.add(uuid);
 			uuidAll.add(uuid);
 		}
@@ -72,7 +72,7 @@ public final class UUIDmap {
 		uuidMap.put(oldUuid, newUuid);
 	}
 	
-	public static boolean isParentFrom(String uuid) {
+	public static boolean isParentForm(String uuid) {
 		return uuidParents.contains(uuid);
 	}
 	
@@ -81,9 +81,9 @@ public final class UUIDmap {
 	}
 	
 	public static String createUniqueUuid() {
-		String newUuid = UUID.randomUUID().toString();
+		String newUuid = UUID.randomUUID().toString().toUpperCase();
 		while (!isUnique(newUuid)) {
-			newUuid = UUID.randomUUID().toString();
+			newUuid = UUID.randomUUID().toString().toUpperCase();
 		}
 		uuidAll.add(newUuid);
 		return newUuid;
