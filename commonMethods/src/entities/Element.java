@@ -20,6 +20,7 @@ import exceptions.CommonMethodException;
 
 public abstract class Element {
 
+	private static int counter = 0;
 	protected final String uuid;
 	protected Element duplicateOfElement = null;
 	protected String name = "tempFormName";
@@ -74,7 +75,13 @@ public abstract class Element {
 				} catch (InterruptedException e) {}
 				this.name = "transfName_" + String.valueOf(new Date().getTime());
 			} else {
-				this.name = "";
+				if(jsonObj.has("typeid")) {
+					this.name = "aN_" + elementNamer(jsonObj.getInt("typeid")) + "_" + getCounter();	
+					setCounter(getCounter() + 1);
+				} else {
+					this.name = "aN_" + getCounter();
+					setCounter(getCounter() + 1);
+				}
 			}
 			
 		}
@@ -203,6 +210,14 @@ public abstract class Element {
 	public static void setAllowNullableName(Boolean value) {
 		allowNullableName = value;
 	}
+	
+	public int getCounter() {
+		return counter;
+	}
+	
+	public void setCounter(int counter) {
+		this.counter = counter;
+	}
 
 	// OTHERS
 
@@ -250,6 +265,48 @@ public abstract class Element {
 			builder.append(CharValues.CRLF + "]" + CharValues.CRLF);
 		}
 		return builder.toString();
+	}
+	
+	public String elementNamer(int number) {
+		String elementName = "noName";
+		
+		if(number == 3) {
+			elementName = "FORM";
+		} else if (number == 4) {
+			elementName = "INPUT_TEXTFIELD";
+		} else if (number == 7) {
+			elementName = "LABEL";
+		} else if (number == 16) {
+			elementName = "TAB_PANEL";
+		} else if (number == 15) {
+			elementName = "TAB";
+		} else if (number == 19) {
+			elementName = "BODY";
+		} else if (number == -4) {
+			elementName = "INPUT_TEXTAREA";
+		} else if (number == -8) {
+			elementName = "INPUT_COMBOBOX";
+		} else if (number == -12) {
+			elementName = "INPUT_RADIO";
+		} else if (number == -16) {
+			elementName = "INPUT_CHECKBOX";
+		} else if (number == -20) {
+			elementName = "INPUT_CALENDAR";
+		} else if (number == -24) {
+			elementName = "INPUT_PASSWORD";
+		} else if (number == -40) {
+			elementName = "INPUT_TYPEAHEAD";
+		} else if (number == 0) {
+			elementName = "BUTTON";
+		} else if (number == 999) {
+			elementName = "BTN_SELECT";
+		} else if (number == 47) {
+			elementName = "MD_INPUT";
+		} else if (number == -47) {
+			elementName = "UI_GRIDVIEW_TEMP";
+		}
+		
+		return elementName.toLowerCase();
 	}
 
 }
