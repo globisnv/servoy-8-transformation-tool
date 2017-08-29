@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -232,14 +231,19 @@ public abstract class Element {
 		StringBuilder builder = new StringBuilder();
 		builder.append("uuid: ").append(CharValues.QM).append(this.uuid).append(CharValues.QM).append(",")
 				.append(CharValues.CRLF);
-		builder.append("typeid: ").append(this.typeid).append(",").append(CharValues.CRLF);
-		builder.append("name: ").append(CharValues.QM).append(this.name).append(CharValues.QM);
+		builder.append("typeid: ").append(this.typeid);
+		if (this.name != null && this.name.length() > 0) {
+			builder.append(",").append(CharValues.CRLF);
+			builder.append("name: ").append(CharValues.QM).append(this.name).append(CharValues.QM).append(CharValues.CRLF);
+		} else {
+			builder.append(CharValues.CRLF);
+		}
 
 		if (this.otherProperties.size() > 0) {
 			builder.append(",").append(CharValues.CRLF);
 
 			for (Entry<String, String> otherProp : this.otherProperties.entrySet()) {
-				String propValue = otherProp.getValue();
+				String propValue = addEscapeChars(otherProp.getValue());
 				if (Element.getElementKeyValueDatatype(otherProp.getKey()) == ElementDatatype.STRING) {
 					propValue = CharValues.QM + propValue + CharValues.QM;
 				}
@@ -308,5 +312,10 @@ public abstract class Element {
 		
 		return elementName.toLowerCase();
 	}
+
+protected String addEscapeChars(String string) {
+		return string.replaceAll("\"", "\\\\\"");
+	}
+
 
 }

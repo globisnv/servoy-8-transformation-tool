@@ -35,9 +35,12 @@ public class JSFormCreator {
 			
 			// do not apply a default name if element has none
 			Element.setAllowNullableName(true);
+			// on writing js$ forms: replace @private anotation by @protected
+			Form.setReplacePrivateByProtected(true);
 			
-			//String path = "C:/Users/geert.haegens/workspaces/GO8ws_DO_NOT_USE/globis_articles/forms";
-			String path = "C:/Users/geert.haegens/workspaces/servoy8testMagWeg/struct_multiparents/forms/";
+			//String path = "C:/Users/geert.haegens/workspaces/GO8ws_DO_NOT_USE/globis_billing/forms";
+			String path = "C:/Users/geert.haegens/workspaces/GO8ws_DO_NOT_USE/globis_purchase/forms";
+			//String path = "C:/Users/geert.haegens/workspaces/servoy8testMagWeg/struct_multiparents/forms/";
 			
 			Set<String> pathAndFilenamesNoExt = FileDAO.scanStructure(path);
 			logEntries.addAll(FileDAO.logEntries);

@@ -13,6 +13,8 @@ public class Form extends Element {
 	protected String jsFile = null;
 	protected final String path;
 	public List<LogEntry> logEntries = new ArrayList<>();
+	
+	private static boolean replacePrivateByProtected = false;
 
 	// CONSTRUCTORS
 
@@ -36,6 +38,9 @@ public class Form extends Element {
 	// GETTERS & SETTERS
 
 	public String getJsFile() {
+		if (this.jsFile != null && replacePrivateByProtected && this.name.startsWith(Filename.JS_PREFIX)) {
+			return jsFile.replaceAll("@private", "@protected");
+		}
 		return jsFile;
 	}
 
@@ -61,6 +66,10 @@ public class Form extends Element {
 		} else {
 			return -1;
 		}
+	}
+	
+	public static void setReplacePrivateByProtected(Boolean value) {
+		replacePrivateByProtected = value;
 	}
 
 	// OTHERS
